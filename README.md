@@ -51,13 +51,13 @@ The  JSON Content under RAW is defined as:
    "COSE":**COSE (hex encoded)**,  <br>
    "BASE45": **BASE45 Encoded COMP**, <br>
    "PREFIX": **BASE45 Encoded Compression with Prefix HC(x):**, <br>
-   "SCHEMA":**integer (USED SCHEMA)**,
-   "JWK":{"kty":"EC",
-          "crv":"P-256",
-          "x":"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4",
-          "y":"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM",
-          "d":"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE",
-          "kid":"1"},
+   "SCHEMA":**integer (USED SCHEMA)**, <br>
+   "JWK":{"kty":"EC", <br>
+          "crv":"P-256", <br>
+          "x":"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", <br>
+          "y":"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", <br>
+          "d":"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE", <br>
+          "kid":"1"}, <br>
 }
 
 Example: 
