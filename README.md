@@ -1,21 +1,47 @@
 # DGC Test Data Repository for Test Automation
 
-To automate the generation and validation tests of COSE/CBOR Codes and it's base45/2D Code representations, a lot of data has to be collected to ensure the variance of the tests. This respository was established to collect a lot of different test data and related test cases of different member states in a standardized manner. Each member state can generate a folder in this section with the following pattern: 
+To automate the generation and validation tests of COSE/CBOR Codes and it's base45/2D Code representations, a lot of data has to be collected to ensure the variance of the tests. This respository was established to collect a lot of different test data and related test cases of different member states in a standardized manner. Each member state can generate a folder in this section. 
 
-## File Structure
+## 2D Code
 
+### Test Procedure
+
+The test procedure has the following steps: 
+
+1. Load RAW Data File X
+2. Apply all test and validation rules to File X (from all countries). 
+3. Fails one rule, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status. 
+
+The inline test procedure contains the steps: 
+
+1. Load RAW File and load JSON Object, validate against schema.
+2. Create CBOR from JSON Object. Validate against the CBOR content in the RAW File.
+3. Sign with the JWK and compare the result to the COSE content.
+4. Encode Cose to base45 and compare it to the BASE45 content. 
+5. Apply the Prefix and Compare it to the PREFIX Content.
+6. Reverse the process. 
+
+### File Structure
+
+/schema/**[Number]**.json <br>
 **[COUNTRY]**/2DCode/raw/**[Number]**.json <br>
-**[COUNTRY]**/2DCode/test/**[Number]**.js <br>
-**[COUNTRY]**/2DCode/validation/**[Number]**.js <br>
+**[COUNTRY]**/2DCode/test/**[Number]_TestName**.js <br>
+**[COUNTRY]**/2DCode/validation/**[Number]_RuleName**.js <br>
 **[COUNTRY]**/2DCode/img/QR/**[Number]**.png
 
-## Variables
+### Variables
 
 COUNTRY is defined as the country code by ISO 3166. 
 
 Number must be a unique number by country/type.
 
-## RAW Content
+### RAW Content
+
+### JSON Schema
+
+A number which identifies the used schema (used in the RAW Data).
+
+### RAW Content
 
 The  JSON Content under RAW is defined as: 
 
@@ -25,6 +51,13 @@ The  JSON Content under RAW is defined as:
    "COSE":**COSE (hex encoded)**,  <br>
    "BASE45": **BASE45 Encoded COMP**, <br>
    "PREFIX": **BASE45 Encoded Compression with Prefix HC(x):**, <br>
+   "SCHEMA":**integer (USED SCHEMA)**,
+   "JWK":{"kty":"EC",
+          "crv":"P-256",
+          "x":"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4",
+          "y":"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM",
+          "d":"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE",
+          "kid":"1"},
 }
 
 Example: 
@@ -37,26 +70,24 @@ Example:
 }
 
 
-## Test Content
+### Test Content
 
-Javascript tests which must be passed during the testing on each 2D Code of the country. The function body is defined as
+Javascript tests which must be passed during the testing. The function body is defined as
 `function [name] ([RAW JSON]) {
     return [boolean]
 }`
 
-## Validation Content
+### Validation Content
 
-Javascript validation rule which must be passed during the testing on each 2D Code of the country. The function body is defined as
+Javascript validation rules which must be passed during the testing of a 2D Code of the country. Each rule is applied on the decoded JSON Content. The function body is defined as
 `function [name] ([Decoded JSON Object]) {
     return [boolean]
 }`
 
-## Image Content
+### Image Content
 
 Contains images of the generated base45 contents(PNG). 
 
+### JWK Content
 
-
-
-
-
+The key pair to sign and validate the data structures. 
