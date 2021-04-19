@@ -73,16 +73,20 @@ Example:
 ### Test Content
 
 Javascript tests which must be passed during the testing. The function body is defined as
-`function [name] ([RAW JSON]) {
+```
+function [name] ([RAW JSON]) {
     return [boolean]
-}`
+}
+```
 
 ### Validation Content
 
 Javascript validation rules which must be passed during the testing of a 2D Code of the country. Each rule is applied on the decoded JSON Content. The function body is defined as
-`function [name] ([Decoded JSON Object]) {
+```
+function [name] ([Decoded JSON Object]) {
     return [boolean]
-}`
+}
+```
 
 ### Image Content
 
