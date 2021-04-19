@@ -35,7 +35,6 @@ COUNTRY is defined as the country code by ISO 3166.
 
 Number must be a unique number by country/type.
 
-### RAW Content
 
 ### JSON Schema
 
