@@ -14,7 +14,7 @@ The test procedure has the following steps:
 
 The inline test procedure contains the steps: 
 
-1. Load RAW File and load JSON Object, validate against schema.
+1. Load RAW File and load JSON Object, validate against JSON schema.
 2. Create CBOR from JSON Object. Validate against the CBOR content in the RAW File.
 3. Sign with the JWK and compare the result to the COSE content.
 4. Encode Cose to base45 and compare it to the BASE45 content. 
@@ -49,8 +49,10 @@ The  JSON Content under RAW is defined as:
    "BASE45": **BASE45 Encoded COMP**, 
    "PREFIX": **BASE45 Encoded Compression with Prefix HC(x):**, 
    "SCHEMA":**integer (USED SCHEMA)**, 
-   "JWK":**JWK Object** 
-   "2DCODE":**BASE64 Encoded PNG**
+   "JWK":**JWK Object** ,
+   "2DCODE":**BASE64 Encoded PNG**,
+   "EXPECTEDDECODE":**boolean**,
+   "EXPECTEDVERIFY":**boolean**
 }
  ```     
 Example: 
@@ -80,6 +82,8 @@ Example:
        2Bo3UPGrpsHzUoaGpDftmWssZkhpBJKVMJyf/RuP2SmmaIzmnw9JiSlYhzo
        4tpzd5rFXhjRbg4zW9C+2qok+2+qDM1iJ684gPHMIY8aLWrdgQTxkumGmTq
        gawR+N5MDtdPTEQ0XfIBc2cJEUyMTY5MPvACWpkA6SdS4xSvdXK3IVfOWA==", 
+  "EXPECTEDDECODE":true,
+  "EXPECTEDVERIFY":false
 }
 ```
 
