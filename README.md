@@ -12,32 +12,39 @@ The test procedure has the following steps:
 2. Apply all test and validation rules to File X (from all countries). 
 3. Fails one rule, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status. 
 
-**Note**: The inline procedure MUST be constructed from Step 1 to X without skipping the steps between.
+**Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRED" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
 
 
 The inline test procedure contains the steps: 
 
 #### Code Generation
 
-1. Load RAW File and load JSON Object, validate against the referenced JSON schema in the test context(SCHEMA field). Compare the result to the test context field **EXPECTEDVALIDOBJECT**
+| Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
+|------------ |--|-----------------|------------|-----|
+|1            | Load RAW File and load JSON Object, validate against the referenced JSON schema in the test context(SCHEMA field). |JSON| SCHEMA| EXPECTEDVALIDOBJECT|
+|2            |Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. |JSON, CBOR||EXPECTEDENCODE|
+|3            |Sign with the private key part of the JWK from the test context and compare the result to the RAW COSE and new COSE content(both must be valid against the given x5c public key). |CBOR, COSE| JWK|EXPECTEDSIGN|
 
-2. Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. Compare the result to the test context field **EXPECTEDENCODE**
-
-3. Sign with the private key part of the JWK from the test context and compare the result to the RAW COSE and new COSE content(both must be valid against the given x5c public key). Compare the result to the test context field **EXPECTEDSIGN**
+**NOTE**: DESCRIPTION, VERSION are for all tests mandatory.
 
 #### Code Validation
 
-1. Load the picture and extract the prefixed BASE45content. Compare the result to the test context field **EXPECTEDPICTUREDECODE** 
-2. Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content. Compare the result to the test context field **EXPECTEDUNPREFIX**
-3. Decode the BASE45 RAW Content and validate the COSE content against the RAW content. Compare the result to the test context field **EXPECTEDB45DECODE**
-4. Check the EXP Field for expiring against the **VALIDATIONCLOCK** time. Compare the result to the test context field **EXPTECTEDEXPIRED** 
-5. Verify the signature of the COSE Object against the JWK Public Key. Compare the result to the test context field  **EXPECTEDVERIFY**
-6. Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. Compare the result to the test context field  **EXPECTEDDECODE**
-7. Transform CBOR into JSON and validate against the RAW JSON content. Compare the result to the test context field  **EXPECTEDVALIDJSON**
-8. Validate the extracted JSON against the schema defined in the test context. Compare the result to the test context field  **EXPECTEDSCHEMAVALIDATION**
+| Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
+|------------ |--|-----------------|------------|-----|
+| 1           | Load the picture and extract the prefixed BASE45content.  |PREFIX , 2DCode |      |EXPECTEDPICTUREDECODE|
+| 2|Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content. |PREFIX, BASE45||EXPECTEDUNPREFIX|
+| 3|Decode the BASE45 RAW Content and validate the COSE content against the RAW content. |BASE45, COSE|| EXPECTEDB45DECODE|
+|4|Check the EXP Field for expiring against the **VALIDATIONCLOCK** time. |COSE| VALIDATIONCLOCK|EXPTECTEDEXPIRED|
+|5|Verify the signature of the COSE Object against the JWK Public Key. |COSE| JWK|EXPECTEDVERIFY|
+|6|Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. |COSE,CBOR||EXPECTEDDECODE|
+|7|Transform CBOR into JSON and validate against the RAW JSON content. |CBOR,JSON||EXPECTEDVALIDJSON|
+|8|Validate the extracted JSON against the schema defined in the test context.  |CBOR,JSON|SCHEMA|EXPECTEDSCHEMAVALIDATION|
+
+**NOTE**: DESCRIPTION, VERSION are for all tests mandatory.
 
 ### File Structure
-/schema/hcert/**[semver]**.json <br>
+/schema/**[semver]**.json <br>
+/COMMON/2DCode/raw/**[Number]**.json <br>
 **[COUNTRY]**/2DCode/raw/**[Number]**.json <br>
 **[COUNTRY]**/2DCode/validation/**[Number]_RuleName**.js <br> (TBD)
 
@@ -62,24 +69,26 @@ The  JSON Content under RAW is defined as:
    "COSE":**COSE (hex encoded)**,  
    "BASE45": **BASE45 Encoded COMP**, 
    "PREFIX": **BASE45 Encoded Compression with Prefix HC(x):**,  
+   "2DCODE":**BASE64 Encoded PNG**,
    "TESTCTX":{
-               "VERSION":**integer**
+               "VERSION":**integer**,
                "SCHEMA":**string (USED SCHEMA)**, (semver) 
                "JWK":**JWK Object** ,
-               "2DCODE":**BASE64 Encoded PNG**,
-               "EXPECTEDVALIDOBJECT":**boolean**,
-               "EXPECTEDSCHEMAVALIDATION":**boolean**,
-               "EXPECTEDENCODE":**boolean**,
-               "EXPECTEDDECODE":**boolean**,
-               "EXPECTEDSIGN":**boolean**,
-               "EXPECTEDVERIFY":**boolean**,
-               "EXPECTEDUNPREFIX":**boolean**,
-               "EXPECTEDVALIDJSON":**boolean**,
-               "EXPECTEDB45DECODE":**boolean**,
-               "EXPECTEDPICTUREDECODE":**boolean**,
-               "EXPTECTEDEXPIRED":**boolean**,
                "VALIDATIONCLOCK":**Timestamp**, (https://docs.jsonata.org/date-time-functions ISO8601)
                "DESCRIPTION":**string**
+               "EXPECTEDRESULTS": {
+                                    "EXPECTEDVALIDOBJECT":**boolean**,
+                                    "EXPECTEDSCHEMAVALIDATION":**boolean**,
+                                    "EXPECTEDENCODE":**boolean**,
+                                    "EXPECTEDDECODE":**boolean**,
+                                    "EXPECTEDSIGN":**boolean**,
+                                    "EXPECTEDVERIFY":**boolean**,
+                                    "EXPECTEDUNPREFIX":**boolean**,
+                                    "EXPECTEDVALIDJSON":**boolean**,
+                                    "EXPECTEDB45DECODE":**boolean**,
+                                    "EXPECTEDPICTUREDECODE":**boolean**,
+                                    "EXPTECTEDEXPIRED":**boolean**,
+                                   }
              }
 }
  ```     
@@ -112,10 +121,19 @@ Example:
                 2Bo3UPGrpsHzUoaGpDftmWssZkhpBJKVMJyf/RuP2SmmaIzmnw9JiSlYhzo
                 4tpzd5rFXhjRbg4zW9C+2qok+2+qDM1iJ684gPHMIY8aLWrdgQTxkumGmTq
                 gawR+N5MDtdPTEQ0XfIBc2cJEUyMTY5MPvACWpkA6SdS4xSvdXK3IVfOWA==", 
-           "EXPECTEDDECODE":true,
-           "EXPECTEDVERIFY":false,
+                
+         
            "VALIDATIONCLOCK":"2017-05-15T15:12:59.152Z",
-           "DESCRIPTION":"Verify Fail Test."
+           "DESCRIPTION":"Verify Fail Test.",
+           "EXPECTEDRESULTS":{
+                             "EXPECTEDDECODE":true,
+                             "EXPECTEDVERIFY":false,
+                             "EXPECTEDUNPREFIX":true,
+                             "EXPTECTEDEXPIRED":true,
+                             "EXPECTEDSCHEMAVALIDATION":true,
+                             "EXPECTEDVALIDOBJECT":true
+                             
+                           }
           }
 }
 ```
