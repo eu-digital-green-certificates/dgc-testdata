@@ -23,7 +23,6 @@ The inline test procedure contains the steps:
 |------------ |--|-----------------|------------|-----|
 |1            | Load RAW File and load JSON Object, validate against the referenced JSON schema in the test context(SCHEMA field). |JSON| SCHEMA| EXPECTEDVALIDOBJECT|
 |2            |Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. |JSON, CBOR||EXPECTEDENCODE|
-|3            |Sign with the private key part of the JWK from the test context and compare the result to the RAW COSE and new COSE content(both must be valid against the given x5c public key). |CBOR, COSE| JWK|EXPECTEDSIGN|
 
 **NOTE**: DESCRIPTION, VERSION are for all tests mandatory.
 
@@ -81,7 +80,6 @@ The  JSON Content under RAW is defined as:
                                     "EXPECTEDSCHEMAVALIDATION":**boolean**,
                                     "EXPECTEDENCODE":**boolean**,
                                     "EXPECTEDDECODE":**boolean**,
-                                    "EXPECTEDSIGN":**boolean**,
                                     "EXPECTEDVERIFY":**boolean**,
                                     "EXPECTEDUNPREFIX":**boolean**,
                                     "EXPECTEDVALIDJSON":**boolean**,
@@ -154,4 +152,4 @@ Contains images of the generated base45 contents(PNG).
 
 ### JWK Content
 
-The key pair to sign and validate the data structures. This is defined as x5c datastructure which contains the public key pair. The private key is defined as JWK representation with x,y coordinates.
+The key pair to validate the data structure. This is defined as x5c datastructure which contains the public key.
