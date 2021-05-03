@@ -45,7 +45,6 @@ The inline test procedure contains the steps:
 /schema/**[semver]**.json <br>
 /COMMON/2DCode/raw/**[Number]**.json <br>
 **[COUNTRY]**/2DCode/raw/**[Number]**.json <br>
-**[COUNTRY]**/2DCode/validation/**[Number]_RuleName**.js <br> (TBD)
 
 ### Variables
 
@@ -75,19 +74,19 @@ The  JSON Content under RAW is defined as:
                "JWK":**JWK Object** ,
                "VALIDATIONCLOCK":**Timestamp**, (https://docs.jsonata.org/date-time-functions ISO8601)
                "DESCRIPTION":**string**
-               "EXPECTEDRESULTS": {
-                                    "EXPECTEDVALIDOBJECT":**boolean**,
-                                    "EXPECTEDSCHEMAVALIDATION":**boolean**,
-                                    "EXPECTEDENCODE":**boolean**,
-                                    "EXPECTEDDECODE":**boolean**,
-                                    "EXPECTEDVERIFY":**boolean**,
-                                    "EXPECTEDUNPREFIX":**boolean**,
-                                    "EXPECTEDVALIDJSON":**boolean**,
-                                    "EXPECTEDB45DECODE":**boolean**,
-                                    "EXPECTEDPICTUREDECODE":**boolean**,
-                                    "EXPTECTEDEXPIRED":**boolean**,
-                                   }
-             }
+             },
+ "EXPECTEDRESULTS": {
+            "EXPECTEDVALIDOBJECT":**boolean**,
+            "EXPECTEDSCHEMAVALIDATION":**boolean**,
+            "EXPECTEDENCODE":**boolean**,
+            "EXPECTEDDECODE":**boolean**,
+            "EXPECTEDVERIFY":**boolean**,
+            "EXPECTEDUNPREFIX":**boolean**,
+            "EXPECTEDVALIDJSON":**boolean**,
+            "EXPECTEDB45DECODE":**boolean**,
+            "EXPECTEDPICTUREDECODE":**boolean**,
+            "EXPTECTEDEXPIRED":**boolean**,
+           }
 }
  ```     
 Example: 
@@ -124,16 +123,16 @@ Example:
          
            "VALIDATIONCLOCK":"2017-05-15T15:12:59.152Z",
            "DESCRIPTION":"Verify Fail Test.",
-           "EXPECTEDRESULTS":{
-                             "EXPECTEDDECODE":true,
-                             "EXPECTEDVERIFY":false,
-                             "EXPECTEDUNPREFIX":true,
-                             "EXPTECTEDEXPIRED":true,
-                             "EXPECTEDSCHEMAVALIDATION":true,
-                             "EXPECTEDVALIDOBJECT":true
-                             
-                           }
-          }
+          },
+ "EXPECTEDRESULTS":{
+                 "EXPECTEDDECODE":true,
+                 "EXPECTEDVERIFY":false,
+                 "EXPECTEDUNPREFIX":true,
+                 "EXPTECTEDEXPIRED":true,
+                 "EXPECTEDSCHEMAVALIDATION":true,
+                 "EXPECTEDVALIDOBJECT":true
+
+               }
 }
 ```
 
