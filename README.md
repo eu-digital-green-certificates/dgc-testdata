@@ -71,7 +71,7 @@ The  JSON Content under RAW is defined as:
    "TESTCTX":{
                "VERSION":**integer**,
                "SCHEMA":**string (USED SCHEMA)**, (semver) 
-               "JWK":**JWK Object** ,
+               "CERTIFICATE":**BASE64** ,
                "VALIDATIONCLOCK":**Timestamp**, (https://docs.jsonata.org/date-time-functions ISO8601)
                "DESCRIPTION":**string**
              },
@@ -100,7 +100,7 @@ Example:
 "TESTCTX":{
          "VERSION":1,
          "SCHEMA":"1.0.0",
-         "JWK":{"x5c":"MIIDQjCCAiqgAwIBAgIGATz/FuLiMA0GCSqGSIb3DQEBBQUAMGIxCzAJB
+         "CERTIFICATE":"MIIDQjCCAiqgAwIBAgIGATz/FuLiMA0GCSqGSIb3DQEBBQUAMGIxCzAJB
                 gNVBAYTAlVTMQswCQYDVQQIEwJDTzEPMA0GA1UEBxMGRGVudmVyMRwwGgYD
                 VQQKExNQaW5nIElkZW50aXR5IENvcnAuMRcwFQYDVQQDEw5CcmlhbiBDYW1
                 wYmVsbDAeFw0xMzAyMjEyMzI5MTVaFw0xODA4MTQyMjI5MTVaMGIxCzAJBg
@@ -118,9 +118,7 @@ Example:
                 zFo+Owb1zxtp3PehFdfQJ610CDLEaS9V9Rqp17hCyybEpOGVwe8fnk+fbEL
                 2Bo3UPGrpsHzUoaGpDftmWssZkhpBJKVMJyf/RuP2SmmaIzmnw9JiSlYhzo
                 4tpzd5rFXhjRbg4zW9C+2qok+2+qDM1iJ684gPHMIY8aLWrdgQTxkumGmTq
-                gawR+N5MDtdPTEQ0XfIBc2cJEUyMTY5MPvACWpkA6SdS4xSvdXK3IVfOWA==", 
-                
-         
+                gawR+N5MDtdPTEQ0XfIBc2cJEUyMTY5MPvACWpkA6SdS4xSvdXK3IVfOWA==",
            "VALIDATIONCLOCK":"2017-05-15T15:12:59.152Z",
            "DESCRIPTION":"Verify Fail Test.",
           },
