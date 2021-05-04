@@ -147,6 +147,6 @@ function [name] ([Decoded JSON Object]) {
 
 Contains images of the generated base45 contents(PNG). 
 
-### JWK Content
+### Certificate Content
 
-The key pair to validate the data structure. This is defined as x5c datastructure which contains the public key.
+The public key to validate the data structure. This is defined as base64 encoded datastructure (PEM).
