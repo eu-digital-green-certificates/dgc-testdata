@@ -10,7 +10,7 @@ The test procedure has the following steps:
 
 1. Load RAW Data File X
 2. Apply all test and validation rules to File X (from all countries). 
-3. Fails one rule, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status. 
+3. If one rule fails, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status. 
 
 **Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRED" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
 
