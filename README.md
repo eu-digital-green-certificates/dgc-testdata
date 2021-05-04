@@ -10,21 +10,41 @@ The test procedure has the following steps:
 
 1. Load RAW Data File X
 2. Apply all test and validation rules to File X (from all countries). 
-3. Fails one rule, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status. 
+3. If one rule fails, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status. 
+
+**Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRED" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
+
 
 The inline test procedure contains the steps: 
 
-1. Load RAW File and load JSON Object, validate against JSON schema.
-2. Create CBOR from JSON Object. Validate against the CBOR content in the RAW File.
-3. Sign with the JWK and compare the result to the COSE content.
-4. Encode Cose to base45 and compare it to the BASE45 content. 
-5. Apply the Prefix and Compare it to the PREFIX Content.
-6. Reverse the process. 
+#### Code Generation
+
+| Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
+|------------ |--|-----------------|------------|-----|
+|1            | Load RAW File and load JSON Object, validate against the referenced JSON schema in the test context(SCHEMA field). |JSON| SCHEMA| EXPECTEDVALIDOBJECT|
+|2            |Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. |JSON, CBOR||EXPECTEDENCODE|
+
+**NOTE**: DESCRIPTION, VERSION are for all tests mandatory.
+
+#### Code Validation
+
+| Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
+|------------ |--|-----------------|------------|-----|
+| 1           | Load the picture and extract the prefixed BASE45content.  |PREFIX , 2DCode |      |EXPECTEDPICTUREDECODE|
+| 2|Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content. |PREFIX, BASE45||EXPECTEDUNPREFIX|
+| 3|Decode the BASE45 RAW Content and validate the COSE content against the RAW content. |BASE45, COSE|| EXPECTEDB45DECODE|
+|4|Check the EXP Field for expiring against the **VALIDATIONCLOCK** time. |COSE| VALIDATIONCLOCK|EXPTECTEDEXPIRED|
+|5|Verify the signature of the COSE Object against the JWK Public Key. |COSE| JWK|EXPECTEDVERIFY|
+|6|Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. |COSE,CBOR||EXPECTEDDECODE|
+|7|Transform CBOR into JSON and validate against the RAW JSON content. |CBOR,JSON||EXPECTEDVALIDJSON|
+|8|Validate the extracted JSON against the schema defined in the test context.  |CBOR,JSON|SCHEMA|EXPECTEDSCHEMAVALIDATION|
+
+**NOTE**: DESCRIPTION, VERSION are for all tests mandatory.
 
 ### File Structure
-/schema/**[Number]**.json <br>
+/schema/**[semver]**.json <br>
+/COMMON/2DCode/raw/**[Number]**.json <br>
 **[COUNTRY]**/2DCode/raw/**[Number]**.json <br>
-**[COUNTRY]**/2DCode/validation/**[Number]_RuleName**.js <br> (TBD)
 
 ### Variables
 
@@ -47,16 +67,26 @@ The  JSON Content under RAW is defined as:
    "COSE":**COSE (hex encoded)**,  
    "BASE45": **BASE45 Encoded COMP**, 
    "PREFIX": **BASE45 Encoded Compression with Prefix HC(x):**,  
+   "2DCODE":**BASE64 Encoded PNG**,
    "TESTCTX":{
-               "VERSION":**integer**
-               "SCHEMA":**integer (USED SCHEMA)**, 
-               "JWK":**JWK Object** ,
-               "2DCODE":**BASE64 Encoded PNG**,
-               "EXPECTEDDECODE":**boolean**,
-               "EXPECTEDVERIFY":**boolean**,
-               "VALIDATIONCLOCK":**Timestamp**
+               "VERSION":**integer**,
+               "SCHEMA":**string (USED SCHEMA)**, (semver) 
+               "CERTIFICATE":**BASE64** ,
+               "VALIDATIONCLOCK":**Timestamp**, (https://docs.jsonata.org/date-time-functions ISO8601)
                "DESCRIPTION":**string**
-             }
+             },
+ "EXPECTEDRESULTS": {
+            "EXPECTEDVALIDOBJECT":**boolean**,
+            "EXPECTEDSCHEMAVALIDATION":**boolean**,
+            "EXPECTEDENCODE":**boolean**,
+            "EXPECTEDDECODE":**boolean**,
+            "EXPECTEDVERIFY":**boolean**,
+            "EXPECTEDUNPREFIX":**boolean**,
+            "EXPECTEDVALIDJSON":**boolean**,
+            "EXPECTEDB45DECODE":**boolean**,
+            "EXPECTEDPICTUREDECODE":**boolean**,
+            "EXPTECTEDEXPIRED":**boolean**,
+           }
 }
  ```     
 Example: 
@@ -68,8 +98,9 @@ Example:
 "BASE45":"NCFI.L3B6AP2YQ2QIN4U8X*8OVL9EM%9DVYD41QG.JFWRXFUB.NEPELVG5PE:NIEORLXCXXN*QEM7V5+G+W8CQFJRHQ O+ZLPUDBOR52PBH81T20/L./L6A1*HQ6I8//PZ-VBGW9ES-BF81VN%KEYKT6GY.J++TF4Q9:M$7R4FI12GQBP8JTIUTJ17%P9/5O87JYWDCURIVKX59B4K0.MC*FOMUFMPA*SH%QF%C/:ISDJKR93E6:52HAMH9GALFRY9WCCCTFVGTR76+FJ$H14YU ZE:F7Z/LH+P+$1MMK*$OOGHX 5J-IFLJI-Q170GP672F/B4NH0BBG44K*5F8WBJ9IJI8.8AO91KPT51RWC7%20UI0FCLB1T9PI/HM9SHA LFVM%0F+UOLTO 24CAC QGRZEY.87NE5WRX:NWWGIB24H52Q5RM4:69ZFBX45K 2$J8RFJG0CS:2UVUJWA4M89E0H6AM-696G:D5784W+J4+I$YJ1IL/*K$JND:O10RD$L$BRS$L6NV:OK$E744PM740V4VJH6BA+CM0JQT:2B+5 MBTXK: 6A*4NSHU62X+8I%9IC88ERX87BT8-XBB24G 0:F3RMCRTQN9VO1A00EB-3XQV6L05:5Y3KYCSIE6DCE7JR7NTCWN/VL3AWG8JJPU%MPGL2*4CL9DO:4BN7U0DK R*0W 8R0JSSI1DVS3%VI06NIR05",
 "PREFIX":"HC1:NCFI.L3B6AP2YQ2QIN4U8X*8OVL9EM%9DVYD41QG.JFWRXFUB.NEPELVG5PE:NIEORLXCXXN*QEM7V5+G+W8CQFJRHQ O+ZLPUDBOR52PBH81T20/L./L6A1*HQ6I8//PZ-VBGW9ES-BF81VN%KEYKT6GY.J++TF4Q9:M$7R4FI12GQBP8JTIUTJ17%P9/5O87JYWDCURIVKX59B4K0.MC*FOMUFMPA*SH%QF%C/:ISDJKR93E6:52HAMH9GALFRY9WCCCTFVGTR76+FJ$H14YU ZE:F7Z/LH+P+$1MMK*$OOGHX 5J-IFLJI-Q170GP672F/B4NH0BBG44K*5F8WBJ9IJI8.8AO91KPT51RWC7%20UI0FCLB1T9PI/HM9SHA LFVM%0F+UOLTO 24CAC QGRZEY.87NE5WRX:NWWGIB24H52Q5RM4:69ZFBX45K 2$J8RFJG0CS:2UVUJWA4M89E0H6AM-696G:D5784W+J4+I$YJ1IL/*K$JND:O10RD$L$BRS$L6NV:OK$E744PM740V4VJH6BA+CM0JQT:2B+5 MBTXK: 6A*4NSHU62X+8I%9IC88ERX87BT8-XBB24G 0:F3RMCRTQN9VO1A00EB-3XQV6L05:5Y3KYCSIE6DCE7JR7NTCWN/VL3AWG8JJPU%MPGL2*4CL9DO:4BN7U0DK R*0W 8R0JSSI1DVS3%VI06NIR05",
 "TESTCTX":{
-         "VERSION":1
-         "JWK":{"x5c":"MIIDQjCCAiqgAwIBAgIGATz/FuLiMA0GCSqGSIb3DQEBBQUAMGIxCzAJB
+         "VERSION":1,
+         "SCHEMA":"1.0.0",
+         "CERTIFICATE":"MIIDQjCCAiqgAwIBAgIGATz/FuLiMA0GCSqGSIb3DQEBBQUAMGIxCzAJB
                 gNVBAYTAlVTMQswCQYDVQQIEwJDTzEPMA0GA1UEBxMGRGVudmVyMRwwGgYD
                 VQQKExNQaW5nIElkZW50aXR5IENvcnAuMRcwFQYDVQQDEw5CcmlhbiBDYW1
                 wYmVsbDAeFw0xMzAyMjEyMzI5MTVaFw0xODA4MTQyMjI5MTVaMGIxCzAJBg
@@ -87,16 +118,23 @@ Example:
                 zFo+Owb1zxtp3PehFdfQJ610CDLEaS9V9Rqp17hCyybEpOGVwe8fnk+fbEL
                 2Bo3UPGrpsHzUoaGpDftmWssZkhpBJKVMJyf/RuP2SmmaIzmnw9JiSlYhzo
                 4tpzd5rFXhjRbg4zW9C+2qok+2+qDM1iJ684gPHMIY8aLWrdgQTxkumGmTq
-                gawR+N5MDtdPTEQ0XfIBc2cJEUyMTY5MPvACWpkA6SdS4xSvdXK3IVfOWA==", 
-           "EXPECTEDDECODE":true,
-           "EXPECTEDVERIFY":false,
-           "VALIDATIONCLOCK":"12-03-2021",
-           "DESCRIPTION":"Verify Fail Test."
-          }
+                gawR+N5MDtdPTEQ0XfIBc2cJEUyMTY5MPvACWpkA6SdS4xSvdXK3IVfOWA==",
+           "VALIDATIONCLOCK":"2017-05-15T15:12:59.152Z",
+           "DESCRIPTION":"Verify Fail Test.",
+          },
+ "EXPECTEDRESULTS":{
+                 "EXPECTEDDECODE":true,
+                 "EXPECTEDVERIFY":false,
+                 "EXPECTEDUNPREFIX":true,
+                 "EXPTECTEDEXPIRED":true,
+                 "EXPECTEDSCHEMAVALIDATION":true,
+                 "EXPECTEDVALIDOBJECT":true
+
+               }
 }
 ```
 
-### Validation Content
+### Validation Content (TBD)
 
 Javascript validation rules which must be passed during the testing of a 2D Code of the country. Each rule is applied on the decoded JSON Content. The function body is defined as
 ```
@@ -111,4 +149,4 @@ Contains images of the generated base45 contents(PNG).
 
 ### JWK Content
 
-The key pair to sign and validate the data structures. This is defined as x5c datastructure which contains the complete key pair.
+The key pair to validate the data structure. This is defined as x5c datastructure which contains the public key.
