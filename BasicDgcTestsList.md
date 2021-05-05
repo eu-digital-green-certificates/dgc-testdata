@@ -16,21 +16,24 @@ This List contains common Test Cases which should be passed by any DGC Validator
 |CO3|COSE/CWT|Algorithm PS256 with ES256|VALID|
 |CO4|COSE/CWT|Algorithm not supported (other then ES256/PS256)|INVALID|
 |CO5|COSE/CWT|Signature cryptographically invalid|INVALID|
-|CO6|COSE/CWT|OID for Test present, but DGC for vacc or recovery|INVALID|
-|CO7|COSE/CWT|OID for Vacc present, but DGC for test or recovery|INVALID|
-|CO8|COSE/CWT|OID for Recovery present, but DGC for vacc or test|INVALID|
-|CO9|COSE/CWT|OID for Test present, DGC is test|VALID|
-|CO10|COSE/CWT|OID for Vacc present, DGC is vacc|VALID|
-|CO11|COSE/CWT|OID for Recovery present, DGC is recovery|VALID|
-|CO12|COSE/CWT|no OID present, DGC is recovery, test or vacc|VALID|
-|CO13|COSE/CWT|validation clock before "ISSUED AT"|INVALID|
-|CO14|COSE/CWT|validation clock after "expired"|INVALID|
-|CO15|COSE/CWT|KID in protected header **correct**, KID in unprotected header **not present**|VALID|
-|CO16|COSE/CWT|KID in protected header **not present**, KID in unprotected header **correct**|VALID|
-|CO17|COSE/CWT|KID in protected header **correct**, KID in unprotected header **correct**|VALID|
-|CO18|COSE/CWT|KID in protected header **correct**, KID in unprotected header **not correct**|VALID|
-|CO19|COSE/CWT|KID in protected header **not correct**, KID in unprotected header **correct**|INVALID|
-|CO20|COSE/CWT|KID in protected header **not present**, KID in unprotected header **not correct**|INVALID|
+|CO6|COSE/CWT|OID for Test present, but DGC for vacc|INVALID|
+|CO7|COSE/CWT|OID for Test present, but DGC for recovery|INVALID|
+|CO8|COSE/CWT|OID for Vacc present, but DGC for test|INVALID|
+|CO9|COSE/CWT|OID for Vacc present, but DGC for recovery|INVALID|
+|CO10|COSE/CWT|OID for Recovery present, but DGC for vacc|INVALID|
+|CO11|COSE/CWT|OID for Recovery present, but DGC for test|INVALID|
+|CO12|COSE/CWT|OID for Test present, DGC is test|VALID|
+|CO13|COSE/CWT|OID for Vacc present, DGC is vacc|VALID|
+|CO14|COSE/CWT|OID for Recovery present, DGC is recovery|VALID|
+|CO15|COSE/CWT|no OID present, DGC is recovery, test or vacc|VALID|
+|CO16|COSE/CWT|validation clock before "ISSUED AT"|INVALID|
+|CO17|COSE/CWT|validation clock after "expired"|INVALID|
+|CO18|COSE/CWT|KID in protected header **correct**, KID in unprotected header **not present**|VALID|
+|CO19|COSE/CWT|KID in protected header **not present**, KID in unprotected header **correct**|VALID|
+|CO20|COSE/CWT|KID in protected header **correct**, KID in unprotected header **correct**|VALID|
+|CO21|COSE/CWT|KID in protected header **correct**, KID in unprotected header **not correct**|VALID|
+|CO22|COSE/CWT|KID in protected header **not correct**, KID in unprotected header **correct**|INVALID|
+|CO23|COSE/CWT|KID in protected header **not present**, KID in unprotected header **not correct**|INVALID|
 |CB01|CBOR|wrong CBOR structure|INVALID|
 |CB02|CBOR|wrong CWT structure|INVALID|
 |DGC1|DGC|DGC does not adhere to schema|INVALID|
