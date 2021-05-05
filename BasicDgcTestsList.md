@@ -30,8 +30,9 @@ This List contains common Test Cases which should be passed by any DGC Validator
 |CO17|COSE/CWT|KID in protected header **correct**, KID in unprotected header **correct**|VALID|
 |CO18|COSE/CWT|KID in protected header **correct**, KID in unprotected header **not correct**|VALID|
 |CO19|COSE/CWT|KID in protected header **not correct**, KID in unprotected header **correct**|INVALID|
-|CB20|CBOR|wrong CBOR structure|INVALID|
-|CB21|CBOR|wrong CWT structure|INVALID|
+|CO20|COSE/CWT|KID in protected header **not present**, KID in unprotected header **not correct**|INVALID|
+|CB01|CBOR|wrong CBOR structure|INVALID|
+|CB02|CBOR|wrong CWT structure|INVALID|
 |DGC1|DGC|DGC does not adhere to schema|INVALID|
 |DGC2|DGC|DGC adheres to schema but contains multiple certificates|INVALID|
 |DGC3|DGC|correct test1 DGC|VALID|
