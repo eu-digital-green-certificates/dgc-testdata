@@ -20,26 +20,32 @@ The inline test procedure contains the steps:
 #### Code Generation
 
 | Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
-|------------ |--|-----------------|------------|-----|
+| :--- | :--- | :--- | :--- | :--- |
 |1            | Load RAW File and load JSON Object, validate against the referenced JSON schema in the test context(SCHEMA field). |JSON| SCHEMA| EXPECTEDVALIDOBJECT|
-|2            |Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. |JSON, CBOR||EXPECTEDENCODE|
+|2            |Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. See note 2 below. |JSON, CBOR||EXPECTEDENCODE|
 
-**NOTE**: DESCRIPTION, VERSION are for all tests mandatory.
+**NOTE**: DESCRIPTION, VERSION are mandatory for all tests.
+
+**NOTE 2**: CBOR objects that are maps (i.e., the Digital Green Certificate), have an undefined order. This means that the actual encodings between two objects containing the same elements may differ since the ordering may be different. Therefore the validation can not be as simple as comparing two byte arrays against each other. The best method is to decode both elements that are to be compared with the same decoder, encode both objects with the same encoder, and then compare.
 
 #### Code Validation
 
 | Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
-|------------ |--|-----------------|------------|-----|
+| :--- | :--- | :--- | :--- | :--- |
 | 1           | Load the picture and extract the prefixed BASE45content.  |PREFIX , 2DCode |      |EXPECTEDPICTUREDECODE|
 | 2|Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content. |PREFIX, BASE45||EXPECTEDUNPREFIX|
 | 3|Decode the BASE45 RAW Content and validate the COSE content against the RAW content. |BASE45, COSE|| EXPECTEDB45DECODE|
 |4|Check the EXP Field for expiring against the **VALIDATIONCLOCK** time. |COSE| VALIDATIONCLOCK|EXPECTEDEXPIRATIONCHECK|
 |5|Verify the signature of the COSE Object against the JWK Public Key. |COSE| JWK|EXPECTEDVERIFY|
-|6|Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. |COSE,CBOR||EXPECTEDDECODE|
-|7|Transform CBOR into JSON and validate against the RAW JSON content. |CBOR,JSON||EXPECTEDVALIDJSON|
+|6|Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. See note 2 below. |COSE,CBOR||EXPECTEDDECODE|
+|7|Transform CBOR into JSON and validate against the RAW JSON content. See note 3 below. |CBOR,JSON||EXPECTEDVALIDJSON|
 |8|Validate the extracted JSON against the schema defined in the test context.  |CBOR,JSON|SCHEMA|EXPECTEDSCHEMAVALIDATION|
 
-**NOTE**: DESCRIPTION, VERSION are for all tests mandatory.
+**NOTE**: DESCRIPTION, VERSION are mandatory for all tests.
+
+**NOTE 2**: CBOR objects that are maps (i.e., the Digital Green Certificate), have an undefined order. This means that the actual encodings between two objects containing the same elements may differ since the ordering may be different. Therefore the validation can not be as simple as comparing two byte arrays against each other. The best method is to decode both elements that are to be compared with the same decoder, encode both objects with the same encoder, and then compare.
+
+**NOTE 3**: As CBOR objects, JSON objects are not ordered, and a plain string comparison of two objects can not be performed. 
 
 ### File Structure
 /schema/**[semver]**.json <br>
