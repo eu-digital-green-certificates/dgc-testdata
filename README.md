@@ -12,7 +12,7 @@ The test procedure has the following steps:
 2. Apply all test and validation rules to File X (from all countries). 
 3. If one rule fails, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status. 
 
-**Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRED" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
+**Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRATIONCHECK" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
 
 
 The inline test procedure contains the steps: 
@@ -33,7 +33,7 @@ The inline test procedure contains the steps:
 | 1           | Load the picture and extract the prefixed BASE45content.  |PREFIX , 2DCode |      |EXPECTEDPICTUREDECODE|
 | 2|Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content. |PREFIX, BASE45||EXPECTEDUNPREFIX|
 | 3|Decode the BASE45 RAW Content and validate the COSE content against the RAW content. |BASE45, COSE|| EXPECTEDB45DECODE|
-|4|Check the EXP Field for expiring against the **VALIDATIONCLOCK** time. |COSE| VALIDATIONCLOCK|EXPTECTEDEXPIRED|
+|4|Check the EXP Field for expiring against the **VALIDATIONCLOCK** time. |COSE| VALIDATIONCLOCK|EXPECTEDEXPIRATIONCHECK|
 |5|Verify the signature of the COSE Object against the JWK Public Key. |COSE| JWK|EXPECTEDVERIFY|
 |6|Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. |COSE,CBOR||EXPECTEDDECODE|
 |7|Transform CBOR into JSON and validate against the RAW JSON content. |CBOR,JSON||EXPECTEDVALIDJSON|
@@ -85,7 +85,7 @@ The  JSON Content under RAW is defined as:
             "EXPECTEDVALIDJSON":**boolean**,
             "EXPECTEDB45DECODE":**boolean**,
             "EXPECTEDPICTUREDECODE":**boolean**,
-            "EXPTECTEDEXPIRED":**boolean**,
+            "EXPECTEDEXPIRATIONCHECK":**boolean**,
            }
 }
  ```     
