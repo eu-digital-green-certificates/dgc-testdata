@@ -12,6 +12,5 @@ The software used to produce the QR-codes can be found at https://github.com/ehn
 [1.json](2DCode/raw/1.json) - Basic DGC with one vaccination entry. 
 
 All tests should be successful.
-NOTE KID is in unproteced header
 
-![1](png/1.png)
+![1](2Dcode/png/1.png)
