@@ -14,3 +14,11 @@ The software used to produce the QR-codes can be found at https://github.com/ehn
 All tests should be successful.
 
 ![1](2Dcode/png/1.png)
+
+### 2
+
+[2.json](2DCode/raw/2.json) - Basic DGC with one test entry. 
+
+All tests should be successful.
+
+![2](2Dcode/png/2.png)
