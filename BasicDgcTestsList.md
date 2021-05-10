@@ -15,7 +15,7 @@ This List contains common Test Cases which should be passed by any DGC Validator
 | CO1  | COSE/CWT  | Algorithm PS256 with RSA 2048                                                      | VALID    | [CO1.json](common/2DCode/raw/CO1.json)   |                       |
 | CO2  | COSE/CWT  | Algorithm PS256 with RSA 3072                                                      | VALID    | [CO2.json](common/2DCode/raw/CO2.json)   |                       |
 | CO3  | COSE/CWT  | Algorithm PS256 with ES256                                                         | VALID    | [CO3.json](common/2DCode/raw/CO3.json)   |                       |
-| CO4  | COSE/CWT  | Algorithm not supported (other then ES256/PS256)                                   | INVALID  | [CO4.json](common/2DCode/raw/CO4.json)   |                       |
+| CO4  | COSE/CWT  | Algorithm not supported (other then ES256/PS256)                                   | INVALID  |                                          |                       |
 | CO5  | COSE/CWT  | Signature cryptographically invalid                                                | INVALID  | [CO5.json](common/2DCode/raw/CO5.json)   |                       |
 | CO6  | COSE/CWT  | OID for Test present, but DGC for vacc                                             | INVALID  | [CO6.json](common/2DCode/raw/CO6.json)   |                       |
 | CO7  | COSE/CWT  | OID for Test present, but DGC for recovery                                         | INVALID  | [CO7.json](common/2DCode/raw/CO7.json)   |                       |
