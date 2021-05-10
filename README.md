@@ -14,15 +14,25 @@ The test procedure has the following steps:
 
 **Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRATIONCHECK" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
 
+|Field|Definition|
+|-----|----------|
+|JSON| The JSON-encoding of the Digital Green Certificate payload|
+|CBOR| The CBOR-encoding of the Digital Green Certificate payload|
+|COSE| The CWT defined by the hCert Spec.| 
+|COMPRESSED| A CWT compressed by zLib|
+|BASE45| The base45 encoding of the compression. |
+|PREFIX| The base45 string concatenated with the Prefix (HC1 etc.) |
+|2DCODE| The base64 encoded PNG of a QR Code. |
+|TESTCTX| Testcontext with context information of the raw data.|
+|EXPECTEDRESULTS| A list of expected results to the testdata.|
 
 The inline test procedure contains the steps: 
-
 #### Code Generation
 
 | Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
 | :--- | :--- | :--- | :--- | :--- |
 |1            | Load RAW File and load JSON Object, validate against the referenced JSON schema in the test context(SCHEMA field). |JSON| SCHEMA| EXPECTEDVALIDOBJECT|
-|2            |Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. See note 2 below. |JSON, CBOR||EXPECTEDENCODE|
+|2            | Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. See note 2 below. |JSON, CBOR||EXPECTEDENCODE|
 
 **NOTE**: DESCRIPTION, VERSION are mandatory for all tests.
 
@@ -58,12 +68,13 @@ COUNTRY is defined as the country code by ISO 3166.
 
 Number must be a unique number by country/type.
 
-
 ### JSON Schema
 
 A number which identifies the used schema (used in the RAW Data).
 
 ### RAW Content
+
+
 
 The  JSON Content under RAW is defined as: 
 ```
