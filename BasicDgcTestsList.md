@@ -35,6 +35,7 @@ This List contains common Test Cases which should be passed by any DGC Validator
 | CO21 | COSE/CWT  | KID in protected header **correct**, KID in unprotected header **not correct**     | VALID    | [CO21.json](common/2DCode/raw/CO21.json) |                       |
 | CO22 | COSE/CWT  | KID in protected header **not correct**, KID in unprotected header **correct**     | INVALID  | [CO22.json](common/2DCode/raw/CO22.json) |                       |
 | CO23 | COSE/CWT  | KID in protected header **not present**, KID in unprotected header **not correct** | INVALID  | [CO23.json](common/2DCode/raw/CO23.json) |                       |
+| CO24 | COSE/CWT  | A wrong generated ECDSA Signature (longer than 70 bytes) should not lead to an crash                       | INVALID  |  |  
 | CBO1 | CBOR      | wrong CBOR structure                                                               | INVALID  | [CBO1.json](common/2DCode/raw/CBO1.json) |                       |
 | CBO2 | CBOR      | wrong CWT structure                                                                | INVALID  | [CBO2.json](common/2DCode/raw/CBO2.json) |                       |
 | DGC1 | DGC       | DGC does not adhere to schema                                                      | INVALID  | [DGC1.json](common/2DCode/raw/DGC1.json) |                       |
