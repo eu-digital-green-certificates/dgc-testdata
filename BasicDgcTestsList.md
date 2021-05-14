@@ -43,3 +43,5 @@ This List contains common Test Cases which should be passed by any DGC Validator
 | DGC4 | DGC       | correct test2 DGC                                                                  | VALID    | [DGC4.json](common/2DCode/raw/DGC4.json) |                       |
 | DGC5 | DGC       | correct recovery DGC                                                               | VALID    | [DGC5.json](common/2DCode/raw/DGC5.json) |                       |
 | DGC6 | DGC       | correct vacc DGC                                                                   | VALID    | [DGC6.json](common/2DCode/raw/DGC6.json) |                       |
+| DGC7 | DGC       | Correct result for Test Result "260373001" (detected")                             | INVALID  |  | https://github.com/eu-digital-green-certificates/dgca-app-core-ios/blob/main/Sources/Models/TestEntry.swift#L68
+|DGC8  | DGC       | The verifier app must show a correct result for future sample timestamps           | INVALID || https://github.com/eu-digital-green-certificates/dgca-app-core-ios/blob/main/Sources/Models/TestEntry.swift#L68
