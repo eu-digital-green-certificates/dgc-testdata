@@ -2,7 +2,7 @@
 
 ---
 
-This directory contains test files produced by the Croatian Ministry of Helth. 
+This directory contains test files produced by the Croatian Ministry of Health. 
 
 ## Test files
 
