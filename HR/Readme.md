@@ -17,7 +17,16 @@ DGC with  recovery certificate entry.
 
 ![1](2DCode/png/1.png)
 
+DGC with  PCR test certificate entry.
+
+![2](2DCode/png/2.png)
+
 
 DGC with  vaccination certificate entry.
 
 ![3](2DCode/png/3.png)
+
+
+DGC with  rapid test certificate entry.
+
+![4](2DCode/png/4.png)
