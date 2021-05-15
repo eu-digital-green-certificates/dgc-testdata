@@ -14,17 +14,34 @@ The test procedure has the following steps:
 
 **Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRATIONCHECK" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
 
-|Field|Definition|
-|-----|----------|
-|JSON| The JSON-encoding of the Digital Green Certificate payload|
-|CBOR| The CBOR-encoding of the Digital Green Certificate payload|
-|COSE| The CWT defined by the hCert Spec.| 
-|COMPRESSED| A CWT compressed by zLib|
-|BASE45| The base45 encoding of the compression. |
-|PREFIX| The base45 string concatenated with the Prefix (HC1 etc.) |
-|2DCODE| The base64 encoded PNG of a QR Code. |
-|TESTCTX| Testcontext with context information of the raw data.|
-|EXPECTEDRESULTS| A list of expected results to the testdata.|
+| Field           | Definition                                                 |
+|-----------------|------------------------------------------------------------|
+| JSON            | The JSON-encoding of the Digital Green Certificate payload |
+| CBOR            | The CBOR-encoding of the Digital Green Certificate payload |
+| COSE            | The CWT defined by the hCert Spec.                         |
+| COMPRESSED      | A CWT compressed by zLib                                   |
+| BASE45          | The base45 encoding of the compression.                    |
+| PREFIX          | The base45 string concatenated with the Prefix (HC1 etc.)  |
+| 2DCODE          | The base64 encoded PNG of a QR Code.                       |
+| TESTCTX         | Testcontext with context information of the raw data.      |
+| EXPECTEDRESULTS | A list of expected results to the testdata.                |
+
+Possible boolean variables set in `EXPECTEDRESULTS`:
+- `EXPECTEDSCHEMAVALIDATION`: Decoded data is valid according to dgc-schema
+- `EXPECTEDDECODE`: Data from input in `CBOR` can be decoded, and the contents match input from `JSON`
+- `EXPECTEDVERIFY`: Data from input in `COSE` can be cryptographically verified, with signer's certificate from `TESTCTX.CERTIFICATE`
+- `EXPECTEDUNPREFIX`: Data from input in `PREFIX` can be decoded, i.e. contains a valid prefix (e.g. `HC1:` for now), and is equal to input in `BASE45`
+- `EXPECTEDVALIDJSON`: Data from input (i.e. `2DCODE` or `PREFIX`) can be decoded (whole chain), and the contents match input from `JSON`
+- `EXPECTEDCOMPRESSION`: Data from input in `COMPRESSED` can be decompressed (with ZLIB), and matches input in `COSE`
+- `EXPECTEDB45DECODE`: Data from input in `BASE45` can be decoded (from Base45), and matches input in `COMPRESSED`
+- `EXPECTEDPICTUREDECODE`: Data from input in `2DCODE` can be decoded (from Base64-encoded PNG), and matches input in `PREFIX`
+- `EXPECTEDEXPIRATIONCHECK`: Data from input is valid when verifying at the moment defined in `TESTCTX.VALIDATIONCLOCK`
+- `EXPECTEDKEYUSAGE`: Data from input in `COSE` can be verified, and the key usage (defined by the OIDs) from `TESTCTX.CERTIFICATE` matches the content (i.e. it is a test statement, vaccination statement, or recovery statement)
+
+For all variables above:
+- When not set, this specific validation step is not tested in this input file
+- When set to `true`, this validation step should succeed
+- When set to `false`, this validation step should fail
 
 The inline test procedure contains the steps: 
 #### Code Generation
@@ -40,16 +57,17 @@ The inline test procedure contains the steps:
 
 #### Code Validation
 
-| Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
-| :--- | :--- | :--- | :--- | :--- |
-| 1           | Load the picture and extract the prefixed BASE45content.  |PREFIX , 2DCode |      |EXPECTEDPICTUREDECODE|
-| 2|Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content. |PREFIX, BASE45||EXPECTEDUNPREFIX|
-| 3|Decode the BASE45 RAW Content and validate the COSE content against the RAW content. |BASE45, COSE|| EXPECTEDB45DECODE|
-|4|Check the EXP Field for expiring against the **VALIDATIONCLOCK** time. |COSE| VALIDATIONCLOCK|EXPECTEDEXPIRATIONCHECK|
-|5|Verify the signature of the COSE Object against the JWK Public Key. |COSE| JWK|EXPECTEDVERIFY|
-|6|Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. See note 2 below. |COSE,CBOR||EXPECTEDDECODE|
-|7|Transform CBOR into JSON and validate against the RAW JSON content. See note 3 below. |CBOR,JSON||EXPECTEDVALIDJSON|
-|8|Validate the extracted JSON against the schema defined in the test context.  |CBOR,JSON|SCHEMA|EXPECTEDSCHEMAVALIDATION|
+| Test Number | Test                                                                                                         | Mandatory Fields | Mandatory Test Context Fields | Variable                 |
+| :---        | :---                                                                                                         | :---             | :---                          | :---                     |
+| 1           | Load the picture and extract the prefixed BASE45content.                                                     | PREFIX , 2DCode  |                               | EXPECTEDPICTUREDECODE    |
+| 2           | Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content.          | PREFIX, BASE45   |                               | EXPECTEDUNPREFIX         |
+| 3           | Decode the BASE45 RAW Content and validate the COSE content against the RAW content.                         | BASE45, COSE     |                               | EXPECTEDB45DECODE        |
+| 4           | Check the EXP Field for expiring against the **VALIDATIONCLOCK** time.                                       | COSE             | VALIDATIONCLOCK               | EXPECTEDEXPIRATIONCHECK  |
+| 5           | Verify the signature of the COSE Object against the JWK Public Key.                                          | COSE             | JWK                           | EXPECTEDVERIFY           |
+| 6           | Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. See note 2 below. | COSE,CBOR        |                               | EXPECTEDDECODE           |
+| 7           | Transform CBOR into JSON and validate against the RAW JSON content. See note 3 below.                        | CBOR,JSON        |                               | EXPECTEDVALIDJSON        |
+| 8           | Validate the extracted JSON against the schema defined in the test context.                                  | CBOR,JSON        | SCHEMA                        | EXPECTEDSCHEMAVALIDATION |
+| 9           | The value given in COMPRESSED has to be decompressed by zlib and must match to the value given in COSE| COSE,COMPRESSED||EXPECTEDCOMPRESSION|
 
 **NOTE**: DESCRIPTION, VERSION are mandatory for all tests.
 
