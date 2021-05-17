@@ -1,0 +1,5 @@
+/.venv/
+/.idea/
+/tests/*.csv
+/tests/*.cache.*
+
