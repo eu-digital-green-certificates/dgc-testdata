@@ -1,0 +1,37 @@
+{
+    "JSON": 
+   {
+   "ver":"1.0.0",
+   "nam":{
+      "fn":"DUPOND",
+      "fnt":"DUPOND",
+      "gn":"Marie",
+      "gnt":"Marie"
+   },
+   "dob":"1962-07-01",
+   "r":[
+      {
+         "tg":"840539006",
+         "fr":"2021-05-02",
+         "co":"FR",
+         "is":"Laboratory",
+         "df":"2021-05-02",
+         "du":"2023-05-02",
+         "ci":"Certificate Identifier"
+      }
+   ]
+  },
+   "PREFIX": "HC1:NCFOXN%TS3DHA SA6K85KFI60INA.QXV80RBXG4JUASXUTSJ+SOE*C3XHA.DK1JZZPQA3:U4OW631A C5PF6846R3R 76QW6SH932Q0PPZW4:.AV8L7:4/JBA93PHNQCB.TVMMFBG7ZMB5O34QNYRVCNN.IFG*GL G-/0*BBLJ33ZCM6DTP4C/S$X4Q$SIYAD-I/2DBAJDAJCNB-437Y4FW2TWHNVGI-JU1HTM9EPDTR58999Q9E$B ZJ83B%3T+H3ZEU*NIM/IIZC8ALD-I3SVI$290L /KEA8WKP/HL:HL8JF8JFHJP7NVDEBR0JG.8B*0CNNV.G.*1IAU:H9CX0/PQO1KV1465BYQV7JBH04G%V:GF$:1J4K%O90/NZAJ%$VRR3XLN/%H%SH%6J5BO2NCL+OIKE1:UF*4%ONZOG7RH*/23H09:FLEE",
+  
+    "EXPECTEDRESULTS": {
+        "EXPECTEDVALIDOBJECT": true,
+        "EXPECTEDSCHEMAVALIDATION": true,
+        "EXPECTEDDECODE": true,
+        "EXPECTEDVERIFY": true,
+        "EXPECTEDUNPREFIX": true,
+        "EXPECTEDVALIDJSON": true,
+        "EXPECTEDCOMPRESSION": true,
+        "EXPECTEDB45DECODE": true,
+        "EXPECTEDPICTUREDECODE": true
+    }
+}
