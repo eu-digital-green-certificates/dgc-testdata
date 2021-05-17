@@ -22,3 +22,19 @@ All tests should be successful.
 All tests should be successful.
 
 ![2](2DCode/png/2.png)
+
+### 3
+
+[2.json](2DCode/raw/3.json) -Negative PCR signed with RSA, no extened key usage
+
+All tests should be successful.
+
+![2](2DCode/png/3.png)
+
+### 3
+
+[2.json](2DCode/raw/4.json) -Negative PCR signed with EC, no extened key usage
+
+All tests should be successful.
+
+![2](2DCode/png/4.png)
