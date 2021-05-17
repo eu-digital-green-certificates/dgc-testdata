@@ -17,7 +17,6 @@
 #
 # Change Log:
 # Version 1.0.0 - Created by Qryptal Pte Ltd, Singapore - First version
-# Version 1.0.1 - Modified by Qryptal Pte Ltd, Singapore - Support Key Validity using VALID_FROM_ts and VALID_UNTIL_ts
 #
 # References:
 # https://ec.europa.eu/health/sites/health/files/ehealth/docs/trust-framework_interoperability_certificates_en.pdf
@@ -26,9 +25,6 @@
 # Dependencies:
 # Python 3.9
 # pip install wheel base45 jsonschema jsonref filecache cose pytest pyzbar Pillow python-dateutil
-# Usage Examples:
-# python ehealth_cert_verification.py -t "<<Secured Code Payload>>"
-# python ehealth_cert_verification.py -k "<<Key File>>" -t "<<Secured Code Payload>>"
 
 from csv import DictWriter
 from glob import glob
@@ -42,18 +38,12 @@ from cose.keys.keytype import KtyEC2, KtyRSA
 from cose.curves import P256
 from cose.messages import Sign1Message, CoseMessage
 from cose.headers import KID
-from base64 import b64encode, b64decode
+from base64 import b64decode
 from base45 import b45decode
 from datetime import datetime, timezone
 from dateutil import parser
-from filecache import filecache, DAY
-from zlib import decompress
 from json import load
-from jsonschema import validate, ValidationError
-from jsonref import load_uri
-from argparse import Namespace
-from pprint import pprint
-from typing import Dict, List
+from typing import Dict
 from cryptography import x509
 from cryptography.utils import int_to_bytes
 from cryptography.x509 import ExtensionNotFound
@@ -98,119 +88,6 @@ CSV_COLUMN_ORDER = ['test_set',
                     EXPECTED_B45DECODE,
                     EXPECTED_EXPIRATION_CHECK,
                     EXPECTED_VERIFY]
-
-
-@filecache(DAY)
-def get_hcert_schema():
-    print('Loading HCERT schema ...')
-    return load_uri('https://id.uvci.eu/DGC.schema.json')
-
-
-def validate_code(params: Namespace):
-    if not params.input.startswith('HC1:'):
-        raise Exception('Error: Not a valid ehealth cert payload')
-
-    b45string = params.input[4:]
-    zip_bytes = b45decode(b45string)
-    cbor_bytes = decompress(zip_bytes)
-    cbor_object = loads(cbor_bytes)
-    # print(loads(cbor_bytes).keys())
-    if isinstance(cbor_object, CBORTag):  # Tagged Cose Object
-        decoded = CoseMessage.decode(cbor_bytes)
-    else:  # Un-tagged Cose Object
-        decoded = Sign1Message.from_cose_obj(cbor_object)
-
-    if KID in decoded.phdr.keys():
-        key_id = b64encode(decoded.phdr[KID]).decode()
-    elif KID in decoded.uhdr.keys():
-        key_id = b64encode(decoded.uhdr[KID]).decode()
-    else:
-        raise Exception('Error: Could not identify public key for verification. KID is missing from the header!')
-
-    with open(params.dsc_certs) as json_file:
-        dsc_certs: Dict = load(json_file)
-
-    if key_id in dsc_certs.keys():
-        eligible_certs: List = dsc_certs[key_id]
-    else:
-        raise Exception(f'Error: Verification certificate with Key ID : {key_id} is missing from {params.dsc_certs}!')
-
-    for cert in eligible_certs:
-        x = y = e = n = None
-        cert = x509.load_pem_x509_certificate(
-            f'-----BEGIN CERTIFICATE-----\n{cert}\n-----END CERTIFICATE-----'.encode())
-        pub = cert.public_key().public_numbers()
-        if cert.signature_algorithm_oid == SignatureAlgorithmOID.RSA_WITH_SHA256:
-            e = int_to_bytes(pub.e)
-            n = int_to_bytes(pub.n)
-        elif cert.signature_algorithm_oid == SignatureAlgorithmOID.ECDSA_WITH_SHA256:
-            x = int_to_bytes(pub.x)
-            y = int_to_bytes(pub.y)
-        else:
-            raise Exception(
-                f'Unsupported Certificate Algorithm: {cert.signature_algorithm_oid} for verification.'
-            )
-        try:
-            dsc_supported_operations = {eku.dotted_string for eku in
-                                        cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage).value}
-        except ExtensionNotFound:
-            dsc_supported_operations = set()
-        dsc_not_valid_before, dsc_not_valid_after = cert.not_valid_before, cert.not_valid_after
-
-        if x and y:
-            decoded.key = CoseKey.from_dict(
-                {
-                    KpKeyOps: [VerifyOp],
-                    KpKty: KtyEC2,
-                    EC2KpCurve: P256,  # Ought o be pk.curve - but the two libs clash
-                    KpAlg: Es256,  # ECDSA using P-256 and SHA-256
-                    EC2KpX: x,
-                    EC2KpY: y,
-                }
-            )
-        elif e and n:
-            decoded.key = CoseKey.from_dict(
-                {
-                    KpKeyOps: [VerifyOp],
-                    KpKty: KtyRSA,
-                    KpAlg: Ps256,  # RSASSA-PSS using SHA-256 and MGF1 with SHA-256
-                    RSAKpE: e,
-                    RSAKpN: n,
-                }
-            )
-
-        if not decoded.verify_signature():
-            continue
-
-        decoded_payload = loads(decoded.payload)
-        # dgc_issuer = decoded_payload[PAYLOAD_ISSUER] if PAYLOAD_ISSUER in decoded_payload.keys() else None
-        dgc_issue_date = datetime.utcfromtimestamp(decoded_payload[PAYLOAD_ISSUE_DATE])
-        dgc_expiry_date = datetime.utcfromtimestamp(decoded_payload[PAYLOAD_EXPIRY_DATE])
-        hcert_collection: Dict[Dict] = decoded_payload[PAYLOAD_HCERT]
-
-        if dgc_issue_date < dsc_not_valid_before or dgc_issue_date > dsc_not_valid_after:
-            raise Exception('Error: DGC signed using the key with issue date outside of its validity period.')
-        if dgc_expiry_date < dsc_not_valid_before or dgc_expiry_date > dsc_not_valid_after:
-            raise Exception('Error: DGC signed using the key with expiry date outside of its validity period.')
-        if dgc_expiry_date < datetime.utcnow():
-            print(f'Warning: DGC validity is expired on {dgc_expiry_date}.')
-
-        for hcert in hcert_collection.values():  # type: Dict
-            try:
-                validate(hcert, get_hcert_schema())
-            except ValidationError:
-                raise Exception(f'Error: Invalid HCERT Payload: {hcert}')
-            if len(set(hcert.keys()) & {'v', 'r', 't'}) > 1:
-                raise Exception(f'Error: DGC adheres to schema but contains multiple certificates')
-            hcert_type = (set(hcert.keys()) & {'v', 'r', 't'}).pop()
-            if dsc_supported_operations and not (dsc_supported_operations & CERT_VALIDITY_MAP[hcert_type]):
-                raise Exception(f'Error: Given DSC is not valid to sign HCERT Type: {hcert_type}')
-            pprint(hcert)
-
-        pprint('Message Validation Successful!')
-        return
-
-    raise Exception('faulty sig')
 
 
 def test_one():
