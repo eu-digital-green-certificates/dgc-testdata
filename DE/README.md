@@ -10,7 +10,7 @@
 
 All tests should be successful.
 
-![1](png/1.png)
+![1](2DCode/png/1.png)
 
 ### 2 - Erika Musterfrau
 
@@ -18,7 +18,7 @@ All tests should be successful.
 
 All tests should be successful.
 
-![2](png/2.png)
+![2](2DCode/png/2.png)
 
 ### 3 - Max Mustermann
 
@@ -26,4 +26,4 @@ All tests should be successful.
 
 Signature validation should fail.
 
-![3](png/3.png)
+![3](2DCode/png/3.png)
