@@ -35,7 +35,7 @@ All tests should be successful.
 
 ### 4
 
-[4.json](2DCode/raw/4.json) -Negative PCR signed with EC, no extened key usage
+[4.json](2DCode/raw/4.json) -Negative PCR signed with RSA, no extened key usage
 
 All tests should be successful.
 Public key uploaded in the ACC environment
