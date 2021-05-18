@@ -67,6 +67,7 @@ The inline test procedure contains the steps:
 | 6           | Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. See note 2 below. | COSE,CBOR        |                               | EXPECTEDDECODE           |
 | 7           | Transform CBOR into JSON and validate against the RAW JSON content. See note 3 below.                        | CBOR,JSON        |                               | EXPECTEDVALIDJSON        |
 | 8           | Validate the extracted JSON against the schema defined in the test context.                                  | CBOR,JSON        | SCHEMA                        | EXPECTEDSCHEMAVALIDATION |
+| 9           | The value given in COMPRESSED has to be decompressed by zlib and must match to the value given in COSE| COSE,COMPRESSED||EXPECTEDCOMPRESSION|
 
 **NOTE**: DESCRIPTION, VERSION are mandatory for all tests.
 
