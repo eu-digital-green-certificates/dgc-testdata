@@ -49,6 +49,7 @@ from cryptography import x509
 from cryptography.utils import int_to_bytes
 from cryptography.x509 import ExtensionNotFound
 from cryptography.x509.oid import SignatureAlgorithmOID
+from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.hazmat.primitives.hashes import SHA256
 
 from io import BytesIO
@@ -127,16 +128,18 @@ def dsc(config_env: Dict):
         x = y = e = n = None
         cert = x509.load_pem_x509_certificate(
             f'-----BEGIN CERTIFICATE-----\n{cert_code}\n-----END CERTIFICATE-----'.encode())
-        pub = cert.public_key().public_numbers()
+
         fingerprint = cert.fingerprint(SHA256())
         keyid = fingerprint[0:8]
 
-        if cert.signature_algorithm_oid == SignatureAlgorithmOID.RSA_WITH_SHA256:
-            e = int_to_bytes(pub.e)
-            n = int_to_bytes(pub.n)
-        elif cert.signature_algorithm_oid == SignatureAlgorithmOID.ECDSA_WITH_SHA256:
-            x = int_to_bytes(pub.x)
-            y = int_to_bytes(pub.y)
+        # if cert.signature_algorithm_oid == SignatureAlgorithmOID.RSA_WITH_SHA256:
+        if isinstance(cert.public_key(), rsa.RSAPublicKey):
+            e = int_to_bytes(cert.public_key().public_numbers().e)
+            n = int_to_bytes(cert.public_key().public_numbers().n)
+        # elif cert.signature_algorithm_oid == SignatureAlgorithmOID.ECDSA_WITH_SHA256:
+        elif isinstance(cert.public_key(), ec.EllipticCurvePublicKey):
+            x = int_to_bytes(cert.public_key().public_numbers().x)
+            y = int_to_bytes(cert.public_key().public_numbers().y)
         else:
             raise Exception(
                 f'Unsupported Certificate Algorithm: {cert.signature_algorithm_oid} for verification.'
@@ -192,28 +195,31 @@ def test_verification_check(config_env: Dict, dgc: Sign1Message, dsc):
             assert not all((dsc[1] == given_kid, dgc.verify_signature()))
 
 
-def _expiration_check(dgc_example: Dict, decoded_payload: Dict, dsc_not_valid_before: datetime,
-                      dsc_not_valid_after: datetime, test_result: Dict):
-    if EXPECTED_EXPIRATION_CHECK in dgc_example[EXPECTED_RESULTS].keys():
-        test_result[EXPECTED_EXPIRATION_CHECK] = f"{dgc_example[EXPECTED_RESULTS][EXPECTED_EXPIRATION_CHECK]}"
-        if VALIDATION_CLOCK in dgc_example[TEST_CONTEXT].keys():
-            if {PAYLOAD_EXPIRY_DATE, PAYLOAD_ISSUE_DATE} <= decoded_payload.keys():
-                dgc_expiry_date = datetime.fromtimestamp(decoded_payload[PAYLOAD_EXPIRY_DATE], tz=timezone.utc)
-                dgc_issue_date = datetime.fromtimestamp(decoded_payload[PAYLOAD_ISSUE_DATE], tz=timezone.utc)
-                validation_clock = parser.isoparse(dgc_example[TEST_CONTEXT][VALIDATION_CLOCK])
-                if not validation_clock.tzinfo:
-                    validation_clock = validation_clock.replace(tzinfo=timezone.utc)
-                result = 'Pass' if (dsc_not_valid_before <= dgc_issue_date <= validation_clock <= dgc_expiry_date <=
-                                    dsc_not_valid_after) == dgc_example[EXPECTED_RESULTS][EXPECTED_EXPIRATION_CHECK] \
-                    else 'Failed'
-            else:
-                result = 'Failed'
-                test_result['error'] += \
-                    f'Cose payload does not contain key {PAYLOAD_EXPIRY_DATE} and/or {PAYLOAD_ISSUE_DATE},'
-            test_result[EXPECTED_EXPIRATION_CHECK] += f':{result}'
-        else:
-            test_result[EXPECTED_EXPIRATION_CHECK] += f':NotRun'
-            test_result['error'] += f'Missing Test Data {VALIDATION_CLOCK},'
+def test_expiration_check(config_env: Dict, dgc: Sign1Message, dsc):
+    dsc_not_valid_before, dsc_not_valid_after = dsc[3], dsc[4]
+    if EXPECTED_EXPIRATION_CHECK not in config_env[EXPECTED_RESULTS].keys():
+        return
+    if TEST_CONTEXT in config_env.keys() and VALIDATION_CLOCK in config_env[TEST_CONTEXT].keys():
+        validation_clock = parser.isoparse(config_env[TEST_CONTEXT][VALIDATION_CLOCK])
+    else:
+        validation_clock = datetime.utcnow()
+    decoded_payload = loads(dgc.payload)
+    assert {PAYLOAD_EXPIRY_DATE, PAYLOAD_ISSUE_DATE} <= decoded_payload.keys(), \
+        f'COSE Payload is missing expiry date: {PAYLOAD_EXPIRY_DATE} and/or issue date: {PAYLOAD_ISSUE_DATE}.'
+    dgc_expiry_date = datetime.fromtimestamp(decoded_payload[PAYLOAD_EXPIRY_DATE], tz=timezone.utc)
+    dgc_issue_date = datetime.fromtimestamp(decoded_payload[PAYLOAD_ISSUE_DATE], tz=timezone.utc)
+    if not validation_clock.tzinfo:  # if timezone is not provided, assume UTC
+        validation_clock = validation_clock.replace(tzinfo=timezone.utc)
+    if config_env[EXPECTED_RESULTS][EXPECTED_EXPIRATION_CHECK]:
+        assert dsc_not_valid_before <= dgc_issue_date
+        assert dgc_issue_date <= validation_clock
+        assert validation_clock <= dgc_expiry_date
+        assert dgc_expiry_date <= dsc_not_valid_after
+    else:
+        assert not all([dsc_not_valid_before <= dgc_issue_date,
+                        dgc_issue_date <= validation_clock,
+                        validation_clock <= dgc_expiry_date,
+                        dgc_expiry_date <= dsc_not_valid_after])
 
 
 def test_b45decode(config_env: Dict):
