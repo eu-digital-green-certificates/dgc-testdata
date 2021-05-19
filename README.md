@@ -4,7 +4,6 @@ To automate the generation and validation tests of COSE/CBOR Codes and it's base
 
 ## Testing & Status
 
-- You can find the current status of testing in the [Status Table](https://github.com/eu-digital-green-certificates/dgc-testdata/blob/main/StatusTable.md).
 - If you found any problems, please create an [Issue](/../../issues).
 - Please make sure to review the issues to see if any other members states found issues with your provided test data. 
 
