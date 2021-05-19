@@ -80,14 +80,16 @@ EXPECTED_VALID_JSON = 'EXPECTEDVALIDJSON'
 EXPECTED_SCHEMA_VALIDATION = 'EXPECTEDSCHEMAVALIDATION'
 EXPECTED_COMPRESSION = 'EXPECTEDCOMPRESSION'
 
-VALIDATION_CLOCK = 'VALIDATIONCLOCK'
-COSE = 'COSE'
-TEST_CONTEXT = 'TESTCTX'
+CBOR = 'CBOR'
 CERTIFICATE = 'CERTIFICATE'
+COMPRESSED = 'COMPRESSED'
+COSE = 'COSE'
+JSON = 'JSON'
+TEST_CONTEXT = 'TESTCTX'
+VALIDATION_CLOCK = 'VALIDATIONCLOCK'
 QR_CODE = '2DCODE'
 PREFIX = 'PREFIX'
 BASE45 = 'BASE45'
-COMPRESSED = 'COMPRESSED'
 
 
 def pytest_generate_tests(metafunc):
@@ -176,6 +178,61 @@ def dsc(config_env: Dict):
         return key, keyid, dsc_supported_operations, dsc_not_valid_before, dsc_not_valid_after
     # else:
     #     raise ValueError(f'Missing Test Data {CERTIFICATE}')
+
+
+def _ordered(obj):
+    if isinstance(obj, dict):
+        return sorted((k, _ordered(v)) for k, v in obj.items())
+    if isinstance(obj, list):
+        return sorted(_ordered(x) for x in obj)
+    else:
+        return obj
+
+
+def test_cose_json(config_env: Dict, dgc: Sign1Message):
+    if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys() or not({COSE, JSON} <= config_env.keys()):
+        return
+    cose_payload = loads(dgc.payload)
+
+    if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
+        assert PAYLOAD_HCERT in cose_payload.keys()
+        cose_payload = cose_payload[PAYLOAD_HCERT][1]
+        assert _ordered(cose_payload) == _ordered(config_env[JSON])
+    else:
+        assert not _ordered(cose_payload) == _ordered(config_env[JSON])
+
+
+def test_cbor_json(config_env: Dict):
+    if EXPECTED_VALID_JSON not in config_env[EXPECTED_RESULTS].keys() or not({JSON, CBOR} <= config_env.keys()):
+        return
+    cbor_bytes = unhexlify(config_env[CBOR])
+    cbor_object = loads(cbor_bytes)
+    if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
+        # assert PAYLOAD_HCERT in cbor_object.keys()
+        if PAYLOAD_HCERT in cbor_object.keys():   # Hack in order to match different level of CBOR Payload
+            cbor_object = cbor_object[PAYLOAD_HCERT][1]
+        assert _ordered(cbor_object) == _ordered(config_env[JSON])
+    else:
+        assert _ordered(cbor_object) != _ordered(config_env[JSON])
+
+
+def test_cose_cbor(config_env: Dict, dgc: Sign1Message):
+    if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys() or not({COSE, CBOR} <= config_env.keys()):
+        return
+    cbor_bytes = unhexlify(config_env[CBOR])
+    cbor_payload = loads(cbor_bytes)
+    cose_payload = loads(dgc.payload)
+
+    if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
+        if PAYLOAD_HCERT not in cbor_payload.keys():  # Hack in order to match different level of CBOR Payload
+            cose_payload = cose_payload[PAYLOAD_HCERT][1]
+        assert _ordered(cbor_payload) == _ordered(cose_payload)
+    else:
+        assert not _ordered(cbor_payload) == _ordered(cose_payload)
+    # assert PAYLOAD_HCERT in decoded_payload.keys()
+    # assert len(decoded_payload[PAYLOAD_HCERT]) == 1
+    # assert 1 in decoded_payload[PAYLOAD_HCERT].keys()
+    # assert _ordered(decoded_payload[PAYLOAD_HCERT][1]) == _ordered(config_env[JSON])
 
 
 def test_verification_check(config_env: Dict, dgc: Sign1Message, dsc):
