@@ -2,6 +2,12 @@
 
 To automate the generation and validation tests of COSE/CBOR Codes and it's base45/2D Code representations, a lot of data has to be collected to ensure the variance of the tests. This respository was established to collect a lot of different test data and related test cases of different member states in a standardized manner. Each member state can generate a folder in this section. 
 
+## Testing & Status
+
+- Please enter your test results in the [Status Table](https://github.com/eu-digital-green-certificates/dgc-testdata/blob/main/StatusTable.md) to help os get a clear picture of the overall state of testing. 
+- If you found any problems, please create an [Issue](/../../issues).
+- PLease make sure to review the issues to see if any other members states found issues with your provided test data. 
+
 ## 2D Code
 
 ### Test Procedure
