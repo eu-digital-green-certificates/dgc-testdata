@@ -13,3 +13,12 @@ This directory contains test files produced by the Belgian administration.
 All tests should be successful.
 
 ![1](png/1.png)
+
+
+### 2
+
+[2.json](2DCode/raw/2.json) - Basic DGC with test certificate entry. 
+
+All tests should be successful.
+
+![2](png/2.png)
