@@ -2,4 +2,5 @@
 /.idea/
 /tests/*.csv
 /tests/*.cache.*
-
+/__pycache__/
+/tests/__pycache__/
