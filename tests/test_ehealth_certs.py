@@ -56,6 +56,9 @@ from io import BytesIO
 from PIL.Image import open as image_open
 from pyzbar.pyzbar import decode as bar_decode
 from os import path
+from filecache import filecache, DAY
+from jsonschema import validate as schema_validate
+from jsonref import load_uri
 
 
 VERSION = '1.1.0'
@@ -92,6 +95,12 @@ PREFIX = 'PREFIX'
 BASE45 = 'BASE45'
 
 
+@filecache(DAY)
+def _get_hcert_schema():
+    print('Loading HCERT schema ...')
+    return load_uri('https://id.uvci.eu/DGC.schema.json')
+
+
 def pytest_generate_tests(metafunc):
     if "config_env" in metafunc.fixturenames:
         country_code = metafunc.config.getoption("country_code")
@@ -119,8 +128,6 @@ def dgc(config_env: Dict) -> Sign1Message:
         else:  # Un-tagged Cose Object
             decoded = Sign1Message.from_cose_obj(cbor_object)
         return decoded
-    # else:
-    #     raise ValueError(f'Missing Test Data {COSE}')
 
 
 @fixture
@@ -176,8 +183,6 @@ def dsc(config_env: Dict):
                 }
             )
         return key, keyid, dsc_supported_operations, dsc_not_valid_before, dsc_not_valid_after
-    # else:
-    #     raise ValueError(f'Missing Test Data {CERTIFICATE}')
 
 
 def _ordered(obj):
@@ -189,15 +194,32 @@ def _ordered(obj):
         return obj
 
 
+def test_cose_schema(config_env: Dict, dgc: Sign1Message):
+    if EXPECTED_SCHEMA_VALIDATION not in config_env[EXPECTED_RESULTS].keys() or COSE not in config_env.keys():
+        return
+    cose_payload = loads(dgc.payload)
+    if config_env[EXPECTED_RESULTS][EXPECTED_SCHEMA_VALIDATION]:
+        assert PAYLOAD_HCERT in cose_payload.keys()
+        assert len(cose_payload[PAYLOAD_HCERT]) == 1
+        assert 1 in cose_payload[PAYLOAD_HCERT].keys()
+        hcert = cose_payload[PAYLOAD_HCERT][1]
+        schema_validate(hcert, _get_hcert_schema())
+        assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1, 'DGC adheres to schema but contains multiple certificates'
+        # hcert_type = (set(hcert.keys()) & {'v', 'r', 't'}).pop()
+        # if dsc_supported_operations and not (dsc_supported_operations & CERT_VALIDITY_MAP[hcert_type]):
+        #     raise Exception(f'Error: Given DSC is not valid to sign HCERT Type: {hcert_type}')
+
+
 def test_cose_json(config_env: Dict, dgc: Sign1Message):
     if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys() or not({COSE, JSON} <= config_env.keys()):
         return
     cose_payload = loads(dgc.payload)
-
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
         assert PAYLOAD_HCERT in cose_payload.keys()
-        cose_payload = cose_payload[PAYLOAD_HCERT][1]
-        assert _ordered(cose_payload) == _ordered(config_env[JSON])
+        assert len(cose_payload[PAYLOAD_HCERT]) == 1
+        assert 1 in cose_payload[PAYLOAD_HCERT].keys()
+        hcert = cose_payload[PAYLOAD_HCERT][1]
+        assert _ordered(hcert) == _ordered(config_env[JSON])
     else:
         assert not _ordered(cose_payload) == _ordered(config_env[JSON])
 
@@ -229,10 +251,6 @@ def test_cose_cbor(config_env: Dict, dgc: Sign1Message):
         assert _ordered(cbor_payload) == _ordered(cose_payload)
     else:
         assert not _ordered(cbor_payload) == _ordered(cose_payload)
-    # assert PAYLOAD_HCERT in decoded_payload.keys()
-    # assert len(decoded_payload[PAYLOAD_HCERT]) == 1
-    # assert 1 in decoded_payload[PAYLOAD_HCERT].keys()
-    # assert _ordered(decoded_payload[PAYLOAD_HCERT][1]) == _ordered(config_env[JSON])
 
 
 def test_verification_check(config_env: Dict, dgc: Sign1Message, dsc):
