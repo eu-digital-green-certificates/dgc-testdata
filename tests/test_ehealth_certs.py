@@ -136,8 +136,7 @@ def _dgc(config_env: Dict) -> Sign1Message:
         return decoded
 
 
-@fixture
-def dsc(config_env: Dict):
+def _dsc(config_env: Dict):
     if TEST_CONTEXT in config_env.keys() and CERTIFICATE in config_env[TEST_CONTEXT].keys():
         cert_code = config_env[TEST_CONTEXT][CERTIFICATE]
         x = y = e = n = None
@@ -292,16 +291,21 @@ def test_cose_cbor(config_env: Dict):
         assert not _ordered(cbor_payload) == _ordered(cose_payload)
 
 
-def test_verification_check(config_env: Dict, dsc):
+def test_verification_check(request, config_env: Dict):
     if EXPECTED_VERIFY not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_VERIFY}')
     if COSE not in config_env.keys():
         skip(f'Test dataset does not contain {COSE}')
     if TEST_CONTEXT not in config_env.keys() or CERTIFICATE not in config_env[TEST_CONTEXT].keys():
         skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
+    if config_env['CO'] == 'SI':
+        request.applymarker(mark.xfail(
+            reason='https://github.com/eu-digital-green-certificates/dgc-testdata/issues/77'))
+
     # noinspection PyBroadException
     try:
         dgc = _dgc(config_env)
+        dsc = _dsc(config_env)
     except Exception:
         if config_env[EXPECTED_RESULTS][EXPECTED_VERIFY]:
             raise
@@ -323,19 +327,24 @@ def test_verification_check(config_env: Dict, dsc):
         assert not all((dsc[1] == given_kid, dgc.verify_signature()))
 
 
-def test_expiration_check(config_env: Dict, dsc):
+def test_expiration_check(request, config_env: Dict):
     if EXPECTED_EXPIRATION_CHECK not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_EXPIRATION_CHECK}')
     if COSE not in config_env.keys():
         skip(f'Test dataset does not contain {COSE}')
     if TEST_CONTEXT not in config_env.keys() or CERTIFICATE not in config_env[TEST_CONTEXT].keys():
         skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
+    if config_env['CO'] == 'SI':
+        request.applymarker(mark.xfail(
+            reason='https://github.com/eu-digital-green-certificates/dgc-testdata/issues/77'))
 
-    dsc_not_valid_before, dsc_not_valid_after = dsc[3], dsc[4]
     if TEST_CONTEXT in config_env.keys() and VALIDATION_CLOCK in config_env[TEST_CONTEXT].keys():
         validation_clock = parser.isoparse(config_env[TEST_CONTEXT][VALIDATION_CLOCK])
     else:
         validation_clock = datetime.utcnow()
+
+    dsc = _dsc(config_env)
+    dsc_not_valid_before, dsc_not_valid_after = dsc[3], dsc[4]
     dgc = _dgc(config_env)
     decoded_payload = loads(dgc.payload)
     assert {PAYLOAD_EXPIRY_DATE, PAYLOAD_ISSUE_DATE} <= decoded_payload.keys(), \
@@ -356,14 +365,19 @@ def test_expiration_check(config_env: Dict, dsc):
                         dgc_expiry_date <= dsc_not_valid_after])
 
 
-def test_expected_key_usage(config_env: Dict, dsc):
+def test_expected_key_usage(request, config_env: Dict):
     if EXPECTED_KEY_USAGE not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_KEY_USAGE}')
     if COSE not in config_env.keys():
         skip(f'Test dataset does not contain {COSE}')
+    if config_env['CO'] == 'SI':
+        request.applymarker(mark.xfail(
+            reason='https://github.com/eu-digital-green-certificates/dgc-testdata/issues/77'))
+
     if TEST_CONTEXT not in config_env.keys() or CERTIFICATE not in config_env[TEST_CONTEXT].keys():
         skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
 
+    dsc = _dsc(config_env)
     dsc_supported_operations = dsc[2]
     dgc = _dgc(config_env)
     cose_payload = loads(dgc.payload)
