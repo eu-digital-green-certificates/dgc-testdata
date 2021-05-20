@@ -16,7 +16,7 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 # Change Log:
-# Version 1.0.0 - Created by Qryptal Pte Ltd, Singapore - First version
+# 20 Mar 2021 - Version 1.0.0 - Created by Qryptal Pte Ltd, Singapore - First version
 #
 # References:
 # https://ec.europa.eu/health/sites/health/files/ehealth/docs/trust-framework_interoperability_certificates_en.pdf
@@ -25,6 +25,12 @@
 # Dependencies:
 # Python 3.9
 # pip install wheel base45 jsonschema jsonref filecache cose pytest pyzbar Pillow python-dateutil
+#
+# Usage:
+# To run all tests: pytest
+# To run tests for a given country: pytest -C=<Country Code> . e.g. pytest -C=AT
+# To run tests for a given test set: pytest -F=<Test Set Name> . e.g. pytest -C=AT -F=1
+
 
 from base64 import b64decode
 from binascii import hexlify, unhexlify
@@ -60,13 +66,7 @@ from pytest import mark
 from pyzbar.pyzbar import decode as bar_decode
 
 
-VERSION = '1.1.0'
-VALID_FROM, VALID_UNTIL = 'VALID_FROM_ts', 'VALID_UNTIL_ts'
-KID_MAP = 'KID_map'
-KTY, CURVE, ALG = 'KTY', 'CURVE', 'ALG'
-X_HEX, Y_HEX = 'X_hex', 'Y_hex'
 PAYLOAD_ISSUER, PAYLOAD_ISSUE_DATE, PAYLOAD_EXPIRY_DATE, PAYLOAD_HCERT = 1, 6, 4, -260
-
 CERT_VALIDITY_MAP = {'t': {'1.3.6.1.4.1.0.1847.2021.1.1', '1.3.6.1.4.1.1847.2021.1.1'},
                      'v': {'1.3.6.1.4.1.0.1847.2021.1.2', '1.3.6.1.4.1.1847.2021.1.2'},
                      'r': {'1.3.6.1.4.1.0.1847.2021.1.3', '1.3.6.1.4.1.1847.2021.1.3'}}
