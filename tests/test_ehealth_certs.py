@@ -61,9 +61,10 @@ from dateutil import parser
 from filecache import filecache, DAY
 from jsonref import load_uri
 from jsonschema import validate as schema_validate
-from pytest import fixture, skip
+from pytest import fixture, skip, fail
 from pytest import mark
 from pyzbar.pyzbar import decode as bar_decode
+from zlib import decompress
 
 
 PAYLOAD_ISSUER, PAYLOAD_ISSUE_DATE, PAYLOAD_EXPIRY_DATE, PAYLOAD_HCERT = 1, 6, 4, -260
@@ -81,6 +82,7 @@ EXPECTED_DECODE = 'EXPECTEDDECODE'
 EXPECTED_VALID_JSON = 'EXPECTEDVALIDJSON'
 EXPECTED_SCHEMA_VALIDATION = 'EXPECTEDSCHEMAVALIDATION'
 EXPECTED_COMPRESSION = 'EXPECTEDCOMPRESSION'
+EXPECTED_KEY_USAGE = 'EXPECTEDKEYUSAGE'
 
 CBOR = 'CBOR'
 CERTIFICATE = 'CERTIFICATE'
@@ -193,6 +195,25 @@ def _ordered(obj):
         return sorted(_ordered(x) for x in obj)
     else:
         return obj
+
+
+def test_compression(config_env: Dict):
+    if EXPECTED_COMPRESSION not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_COMPRESSION}')
+    if not({COSE, COMPRESSED} <= config_env.keys()):
+        skip(f'Test dataset does not contain {COSE} and/or {COMPRESSED}')
+    cbor_bytes = unhexlify(config_env[COSE])
+    zip_bytes = unhexlify(config_env[COMPRESSED])
+    if config_env[EXPECTED_RESULTS][EXPECTED_COMPRESSION]:
+        decompressed_cbor_bytes = decompress(zip_bytes)
+        assert decompressed_cbor_bytes == cbor_bytes
+    else:
+        # noinspection PyBroadException
+        try:
+            decompressed_cbor_bytes = decompress(zip_bytes)
+        except Exception:
+            return
+        assert decompressed_cbor_bytes != cbor_bytes
 
 
 def test_cose_schema(request, config_env: Dict):
@@ -330,6 +351,30 @@ def test_expiration_check(config_env: Dict, dsc):
                         dgc_issue_date <= validation_clock,
                         validation_clock <= dgc_expiry_date,
                         dgc_expiry_date <= dsc_not_valid_after])
+
+
+def test_expected_key_usage(config_env: Dict, dsc):
+    if EXPECTED_KEY_USAGE not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_KEY_USAGE}')
+    if COSE not in config_env.keys():
+        skip(f'Test dataset does not contain {COSE}')
+    if TEST_CONTEXT not in config_env.keys() or CERTIFICATE not in config_env[TEST_CONTEXT].keys():
+        skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
+
+    dsc_supported_operations = dsc[2]
+    dgc = _dgc(config_env)
+    cose_payload = loads(dgc.payload)
+    hcert = cose_payload[PAYLOAD_HCERT][1]
+    hcert_type = (set(hcert.keys()) & {'v', 'r', 't'}).pop()
+
+    if config_env[EXPECTED_RESULTS][EXPECTED_KEY_USAGE] and dsc_supported_operations:
+        assert (dsc_supported_operations & CERT_VALIDITY_MAP[hcert_type]), \
+            f'Given DSC is not valid to sign HCERT Type: {hcert_type}'
+    elif dsc_supported_operations:
+        assert not (dsc_supported_operations & CERT_VALIDITY_MAP[hcert_type]), \
+            f'Given DSC is valid to sign HCERT Type: {hcert_type}'
+    elif not config_env[EXPECTED_RESULTS][EXPECTED_KEY_USAGE]:
+        fail(f'Given DSC is valid to sign HCERT Type: {hcert_type}')
 
 
 def test_b45decode(config_env: Dict):
