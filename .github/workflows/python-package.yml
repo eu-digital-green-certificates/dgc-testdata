@@ -39,6 +39,8 @@ jobs:
     - name: Test with pytest
       run: |
         pytest --md-report --md-report-verbose=1 --html=test_report.html
-    - uses: actions/upload-artifact@v2
+    - name: Upload pytest test results
+      uses: actions/upload-artifact@v2
       with:
         path: test_report.html
+      if: ${{ always() }}

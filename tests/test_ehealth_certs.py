@@ -275,11 +275,12 @@ def test_verification_check(config_env: Dict, dsc):
         skip(f'Test dataset does not contain {COSE}')
     if TEST_CONTEXT not in config_env.keys() or CERTIFICATE not in config_env[TEST_CONTEXT].keys():
         skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
+    # noinspection PyBroadException
     try:
         dgc = _dgc(config_env)
-    except Exception as ex:
+    except Exception:
         if config_env[EXPECTED_RESULTS][EXPECTED_VERIFY]:
-            assert False, str(ex)
+            raise
         else:
             return
 
