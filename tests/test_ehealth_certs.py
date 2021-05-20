@@ -384,7 +384,11 @@ def test_expected_key_usage(request, config_env: Dict):
     dsc_supported_operations = dsc[2]
     dgc = _dgc(config_env)
     cose_payload = loads(dgc.payload)
+    assert PAYLOAD_HCERT in cose_payload.keys()
+    assert len(cose_payload[PAYLOAD_HCERT]) == 1
+    assert 1 in cose_payload[PAYLOAD_HCERT].keys()
     hcert = cose_payload[PAYLOAD_HCERT][1]
+    assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1, 'DGC adheres to schema but contains multiple certificates'
     hcert_type = (set(hcert.keys()) & {'v', 'r', 't'}).pop()
 
     if config_env[EXPECTED_RESULTS][EXPECTED_KEY_USAGE] and dsc_supported_operations:
