@@ -26,40 +26,38 @@
 # Python 3.9
 # pip install wheel base45 jsonschema jsonref filecache cose pytest pyzbar Pillow python-dateutil
 
-from pathlib import Path
-from pytest import fixture, skip
-from glob import glob
+from base64 import b64decode
 from binascii import hexlify, unhexlify
+from datetime import datetime, timezone
+from glob import glob
+from io import BytesIO
+from json import load
+from os import path
+from pathlib import Path
+from typing import Dict
+from PIL.Image import open as image_open
+from base45 import b45decode
 from cbor2 import loads, CBORTag
 from cose.algorithms import Es256, Ps256
-from cose.keys import CoseKey
-from cose.keys.keyparam import KpAlg, EC2KpX, EC2KpY, EC2KpCurve, RSAKpE, RSAKpN, KpKty, KpKeyOps
-from cose.keys.keyops import VerifyOp
-from cose.keys.keytype import KtyEC2, KtyRSA
-from cose.keys.curves import P256
-from cose.messages import Sign1Message
 from cose.headers import KID
-from base64 import b64decode
-from base45 import b45decode
-from datetime import datetime, timezone
-from dateutil import parser
-from json import load
-from typing import Dict
+from cose.keys import CoseKey
+from cose.keys.curves import P256
+from cose.keys.keyops import VerifyOp
+from cose.keys.keyparam import KpAlg, EC2KpX, EC2KpY, EC2KpCurve, RSAKpE, RSAKpN, KpKty, KpKeyOps
+from cose.keys.keytype import KtyEC2, KtyRSA
+from cose.messages import Sign1Message
 from cryptography import x509
-from cryptography.utils import int_to_bytes
-from cryptography.x509 import ExtensionNotFound
-# from cryptography.x509.oid import SignatureAlgorithmOID
 from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.hazmat.primitives.hashes import SHA256
-
-from io import BytesIO
-from PIL.Image import open as image_open
-from pyzbar.pyzbar import decode as bar_decode
-from os import path
+from cryptography.utils import int_to_bytes
+from cryptography.x509 import ExtensionNotFound
+from dateutil import parser
 from filecache import filecache, DAY
-from jsonschema import validate as schema_validate
 from jsonref import load_uri
-# from pytest import mark
+from jsonschema import validate as schema_validate
+from pytest import fixture, skip
+from pytest import mark
+from pyzbar.pyzbar import decode as bar_decode
 
 
 VERSION = '1.1.0'
@@ -197,13 +195,14 @@ def _ordered(obj):
         return obj
 
 
-def test_cose_schema(config_env: Dict):
+def test_cose_schema(request, config_env: Dict):
     if EXPECTED_SCHEMA_VALIDATION not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_SCHEMA_VALIDATION}')
     if COSE not in config_env.keys():
         skip(f'Test dataset does not contain {COSE}')
     if config_env['CO'] == 'NL':
-        skip('Issue: NL: EXPECTEDSCHEMAVALIDATION #107')
+        request.applymarker(mark.xfail(
+            reason='https://github.com/eu-digital-green-certificates/dgc-testdata/issues/107'))
     if config_env[EXPECTED_RESULTS][EXPECTED_SCHEMA_VALIDATION]:
         dgc = _dgc(config_env)
         cose_payload = loads(dgc.payload)
