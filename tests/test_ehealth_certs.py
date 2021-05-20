@@ -373,6 +373,9 @@ def test_expected_key_usage(request, config_env: Dict):
     if config_env['CO'] == 'SI':
         request.applymarker(mark.xfail(
             reason='https://github.com/eu-digital-green-certificates/dgc-testdata/issues/77'))
+    if config_env['CO'] == 'NL':
+        request.applymarker(mark.xfail(
+            reason='https://github.com/eu-digital-green-certificates/dgc-testdata/issues/146'))
 
     if TEST_CONTEXT not in config_env.keys() or CERTIFICATE not in config_env[TEST_CONTEXT].keys():
         skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
