@@ -38,12 +38,11 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest --md-report --md-report-verbose=1 --html=dgc_testdata_report.html
+        pytest --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html
     - name: Upload pytest test results
       uses: actions/upload-artifact@v2
       with:
         name: dgc-testdata-report
         path: |
           dgc_testdata_report.html
-          style.css
       if: ${{ always() }}
