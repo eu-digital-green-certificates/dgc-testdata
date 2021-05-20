@@ -2,6 +2,11 @@
 
 To automate the generation and validation tests of COSE/CBOR Codes and it's base45/2D Code representations, a lot of data has to be collected to ensure the variance of the tests. This respository was established to collect a lot of different test data and related test cases of different member states in a standardized manner. Each member state can generate a folder in this section. 
 
+## Testing & Status
+
+- If you found any problems, please create an [Issue](/../../issues).
+- Please make sure to review the issues to see if any other members states found issues with your provided test data. 
+
 ## 2D Code
 
 ### Test Procedure
@@ -14,15 +19,42 @@ The test procedure has the following steps:
 
 **Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRATIONCHECK" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
 
+| Field           | Definition                                                 |
+|-----------------|------------------------------------------------------------|
+| JSON            | The JSON-encoding of the Digital Green Certificate payload |
+| CBOR            | The CBOR-encoding of the Digital Green Certificate payload |
+| COSE            | The CWT defined by the hCert Spec.                         |
+| COMPRESSED      | A CWT compressed by zLib                                   |
+| BASE45          | The base45 encoding of the compression.                    |
+| PREFIX          | The base45 string concatenated with the Prefix (HC1 etc.)  |
+| 2DCODE          | The base64 encoded PNG of a QR Code.                       |
+| TESTCTX         | Testcontext with context information of the raw data.      |
+| EXPECTEDRESULTS | A list of expected results to the testdata.                |
+
+Possible boolean variables set in `EXPECTEDRESULTS`:
+- `EXPECTEDSCHEMAVALIDATION`: Decoded data is valid according to dgc-schema
+- `EXPECTEDDECODE`: Data from input in `CBOR` can be decoded, and the contents match input from `JSON`
+- `EXPECTEDVERIFY`: Data from input in `COSE` can be cryptographically verified, with signer's certificate from `TESTCTX.CERTIFICATE`
+- `EXPECTEDUNPREFIX`: Data from input in `PREFIX` can be decoded, i.e. contains a valid prefix (e.g. `HC1:` for now), and is equal to input in `BASE45`
+- `EXPECTEDVALIDJSON`: Data from input (i.e. `2DCODE` or `PREFIX`) can be decoded (whole chain), and the contents match input from `JSON`
+- `EXPECTEDCOMPRESSION`: Data from input in `COMPRESSED` can be decompressed (with ZLIB), and matches input in `COSE`
+- `EXPECTEDB45DECODE`: Data from input in `BASE45` can be decoded (from Base45), and matches input in `COMPRESSED`
+- `EXPECTEDPICTUREDECODE`: Data from input in `2DCODE` can be decoded (from Base64-encoded PNG), and matches input in `PREFIX`
+- `EXPECTEDEXPIRATIONCHECK`: Data from input is valid when verifying at the moment defined in `TESTCTX.VALIDATIONCLOCK`
+- `EXPECTEDKEYUSAGE`: Data from input in `COSE` can be verified, and the key usage (defined by the OIDs) from `TESTCTX.CERTIFICATE` matches the content (i.e. it is a test statement, vaccination statement, or recovery statement)
+
+For all variables above:
+- When not set, this specific validation step is not tested in this input file
+- When set to `true`, this validation step should succeed
+- When set to `false`, this validation step should fail
 
 The inline test procedure contains the steps: 
-
 #### Code Generation
 
 | Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
 | :--- | :--- | :--- | :--- | :--- |
 |1            | Load RAW File and load JSON Object, validate against the referenced JSON schema in the test context(SCHEMA field). |JSON| SCHEMA| EXPECTEDVALIDOBJECT|
-|2            |Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. See note 2 below. |JSON, CBOR||EXPECTEDENCODE|
+|2            | Create CBOR from JSON Object. Validate against the CBOR content in the RAW File. See note 2 below. |JSON, CBOR||EXPECTEDENCODE|
 
 **NOTE**: DESCRIPTION, VERSION are mandatory for all tests.
 
@@ -30,16 +62,17 @@ The inline test procedure contains the steps:
 
 #### Code Validation
 
-| Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
-| :--- | :--- | :--- | :--- | :--- |
-| 1           | Load the picture and extract the prefixed BASE45content.  |PREFIX , 2DCode |      |EXPECTEDPICTUREDECODE|
-| 2|Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content. |PREFIX, BASE45||EXPECTEDUNPREFIX|
-| 3|Decode the BASE45 RAW Content and validate the COSE content against the RAW content. |BASE45, COSE|| EXPECTEDB45DECODE|
-|4|Check the EXP Field for expiring against the **VALIDATIONCLOCK** time. |COSE| VALIDATIONCLOCK|EXPECTEDEXPIRATIONCHECK|
-|5|Verify the signature of the COSE Object against the JWK Public Key. |COSE| JWK|EXPECTEDVERIFY|
-|6|Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. See note 2 below. |COSE,CBOR||EXPECTEDDECODE|
-|7|Transform CBOR into JSON and validate against the RAW JSON content. See note 3 below. |CBOR,JSON||EXPECTEDVALIDJSON|
-|8|Validate the extracted JSON against the schema defined in the test context.  |CBOR,JSON|SCHEMA|EXPECTEDSCHEMAVALIDATION|
+| Test Number | Test                                                                                                         | Mandatory Fields | Mandatory Test Context Fields | Variable                 |
+| :---        | :---                                                                                                         | :---             | :---                          | :---                     |
+| 1           | Load the picture and extract the prefixed BASE45content.                                                     | PREFIX , 2DCode  |                               | EXPECTEDPICTUREDECODE    |
+| 2           | Load Prefix Object from RAW Content and remove the prefix. Validate against the BASE45 raw content.          | PREFIX, BASE45   |                               | EXPECTEDUNPREFIX         |
+| 3           | Decode the BASE45 RAW Content and validate the COSE content against the RAW content.                         | BASE45, COSE     |                               | EXPECTEDB45DECODE        |
+| 4           | Check the EXP Field for expiring against the **VALIDATIONCLOCK** time.                                       | COSE             | VALIDATIONCLOCK               | EXPECTEDEXPIRATIONCHECK  |
+| 5           | Verify the signature of the COSE Object against the JWK Public Key.                                          | COSE             | JWK                           | EXPECTEDVERIFY           |
+| 6           | Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. See note 2 below. | COSE,CBOR        |                               | EXPECTEDDECODE           |
+| 7           | Transform CBOR into JSON and validate against the RAW JSON content. See note 3 below.                        | CBOR,JSON        |                               | EXPECTEDVALIDJSON        |
+| 8           | Validate the extracted JSON against the schema defined in the test context.                                  | CBOR,JSON        | SCHEMA                        | EXPECTEDSCHEMAVALIDATION |
+| 9           | The value given in COMPRESSED has to be decompressed by zlib and must match to the value given in COSE| COSE,COMPRESSED||EXPECTEDCOMPRESSION|
 
 **NOTE**: DESCRIPTION, VERSION are mandatory for all tests.
 
@@ -58,12 +91,13 @@ COUNTRY is defined as the country code by ISO 3166.
 
 Number must be a unique number by country/type.
 
-
 ### JSON Schema
 
 A number which identifies the used schema (used in the RAW Data).
 
 ### RAW Content
+
+
 
 The  JSON Content under RAW is defined as: 
 ```
@@ -125,15 +159,15 @@ Example:
             }
         ]
     },
-    "CBOR": "a4041a6092dd20061a60903a2001624154390103a101a4617681aa62646e01626d616d4f52472d3130303033303231356276706a313131393330353030356264746a323032312d30322d313862636f624154626369783075726e3a757663693a30313a41543a313038303738343346393441454530454535303933464243323534424438313350626d706c45552f312f32302f313532386269736e424d5347504b20417573747269616273640262746769383430353339303036636e616da463666e74754d5553544552465241553c474f455353494e47455262666e754d7573746572667261752d47c3b6c39f696e67657263676e74684741425249454c4562676e684761627269656c656376657265312e302e3063646f626a313939382d30322d3236",
-    "COSE": "d2844da20448c27cf6f2194e44450126a0590124a4041a6092dd20061a60903a2001624154390103a101a4617681aa62646e01626d616d4f52472d3130303033303231356276706a313131393330353030356264746a323032312d30322d313862636f624154626369783075726e3a757663693a30313a41543a313038303738343346393441454530454535303933464243323534424438313350626d706c45552f312f32302f313532386269736e424d5347504b20417573747269616273640262746769383430353339303036636e616da463666e74754d5553544552465241553c474f455353494e47455262666e754d7573746572667261752d47c3b6c39f696e67657263676e74684741425249454c4562676e684761627269656c656376657265312e302e3063646f626a313939382d30322d323658407376bf4d450f2b9796edc5c8599f040c43c0a0ca944e923260af639adf9039b11b9797e8ff0ce9230b9a16d4aaeb2de5a7aad8bb9b65945b5764a8e9a685181a",
-    "COMPRESSED": "78da017a0185fed2844da20448c27cf6f2194e44450126a0590124a4041a6092dd20061a60903a2001624154390103a101a4617681aa62646e01626d616d4f52472d3130303033303231356276706a313131393330353030356264746a323032312d30322d313862636f624154626369783075726e3a757663693a30313a41543a313038303738343346393441454530454535303933464243323534424438313350626d706c45552f312f32302f313532386269736e424d5347504b20417573747269616273640262746769383430353339303036636e616da463666e74754d5553544552465241553c474f455353494e47455262666e754d7573746572667261752d47c3b6c39f696e67657263676e74684741425249454c4562676e684761627269656c656376657265312e302e3063646f626a313939382d30322d323658407376bf4d450f2b9796edc5c8599f040c43c0a0ca944e923260af639adf9039b11b9797e8ff0ce9230b9a16d4aaeb2de5a7aad8bb9b65945b5764a8e9a685181a24398437",
-    "BASE45": "NCFI80T80T9WTWGVLK-89+ZFCRUB+9PW8X*4FBBKS4FN0H9C/.RWY0F9CUF7*70TB8D97TK0F90KECTHGXJC +D.JCBECB1A-:8$966469L6OF6VX6Z/E5JD%96IA7B46646VX6LVC6JD846Y968464W5Y57UPC/IC2UAOPCX8F6%E3.DA%EOPC1G72A6TB82G7E46D46X47VL6JA7EB8RX83Y8QW6IA7V*8CM8UW6:G8U47-L6.JCP9EJY8L/5M/5546.96VF6%JCUQE8H8YNAZ6AM347%EKWEMED3KC.SC4KCD3DX47B46IL6646I*6..DX%DLPCG/DE$EIZAITA2IA.HA+YAU09HY8 NAE+9GY8ZJCH/DTZ9 QE5$C .CJECQW5HXO*WOZED93DXKEI3DAWEG09DH8$B9+S9 JC4/D3192KCQEDTVD$PC5$CUZCY$5Y$5JPCT3E5JDOA7Q478465W57*6T68O0FQY9D-1G7JT2UYEPS4KYO1$FOKRP:-9QG6Y7M2QJLAIOHMH7JMKTKS1GJ4QLJ$*Q+WTL1T-QLCWN*$CSOBSWC9OT7$GWD39C7A1",
-    "PREFIX": "HC1:NCFI80T80T9WTWGVLK-89+ZFCRUB+9PW8X*4FBBKS4FN0H9C/.RWY0F9CUF7*70TB8D97TK0F90KECTHGXJC +D.JCBECB1A-:8$966469L6OF6VX6Z/E5JD%96IA7B46646VX6LVC6JD846Y968464W5Y57UPC/IC2UAOPCX8F6%E3.DA%EOPC1G72A6TB82G7E46D46X47VL6JA7EB8RX83Y8QW6IA7V*8CM8UW6:G8U47-L6.JCP9EJY8L/5M/5546.96VF6%JCUQE8H8YNAZ6AM347%EKWEMED3KC.SC4KCD3DX47B46IL6646I*6..DX%DLPCG/DE$EIZAITA2IA.HA+YAU09HY8 NAE+9GY8ZJCH/DTZ9 QE5$C .CJECQW5HXO*WOZED93DXKEI3DAWEG09DH8$B9+S9 JC4/D3192KCQEDTVD$PC5$CUZCY$5Y$5JPCT3E5JDOA7Q478465W57*6T68O0FQY9D-1G7JT2UYEPS4KYO1$FOKRP:-9QG6Y7M2QJLAIOHMH7JMKTKS1GJ4QLJ$*Q+WTL1T-QLCWN*$CSOBSWC9OT7$GWD39C7A1",
+    "CBOR": "bf6376657265312e302e30636e616dbf62666e754d7573746572667261752d47c3b6c39f696e67657263666e74754d5553544552465241553c474f455353494e47455262676e684761627269656c6563676e74684741425249454c45ff63646f626a313939382d30322d3236617681bf627467693834303533393030366276706a31313139333035303035626d706c45552f312f32302f31353238626d616d4f52472d31303030333032313562646e01627364026264746a323032312d30322d313862636f6241546269736e424d5347504b2041757374726961626369783075726e3a757663693a30313a41543a313038303738343346393441454530454535303933464243323534424438313350ffff",
+    "COSE": "d2844da2044804bde79bdb2ae6600126a0590124a4041a6092dd20061a60903a2001624154390103a101a4617681aa62646e01626d616d4f52472d3130303033303231356276706a313131393330353030356264746a323032312d30322d313862636f624154626369783075726e3a757663693a30313a41543a313038303738343346393441454530454535303933464243323534424438313350626d706c45552f312f32302f313532386269736e424d5347504b20417573747269616273640262746769383430353339303036636e616da463666e74754d5553544552465241553c474f455353494e47455262666e754d7573746572667261752d47c3b6c39f696e67657263676e74684741425249454c4562676e684761627269656c656376657265312e302e3063646f626a313939382d30322d32365840151971b37480c44ffb882793d4d7a073a9367eef3f5ac33a328f17054625e4bfc55cf6f7c038ff08e488090fe20d6cffbb44d7614aa21a79503d7857854e857b",
+    "COMPRESSED": "78dabbd4e2bb88c58365eff3d9b7b59e2530aa2d88645459c2229530e9ae029b54c2042b05c624c7104b46e6858c4b12cb1a5725a5e43126e526e6fa07b9eb1a1a1818181b18199a26951564191a1a5a1a1b981a189826a59464190185750d8c740d2d9292f3810624256756189416e559959625675a19185a398658191a5818985b9818bb599a38baba1ab8ba9a1a581abb39391b999a38b958181a0724e516e4b886ea1bea1b19e81b9a1a59246516e739f906bb07782b389616971465262615a7302595a4675a9818981a5b1a189825e725e62e494ecb2b29f50d0d0e710d720b720cb571f7770d0ef6f473770d4a4acb2bf5056a4d2d4a2b4a2cd5753fbcedf0fcccbcf4d4a2e4f4bc920c7747a7204f571fd7a4f4bc0cf7c4a4a2ccd49cd4e4b2d4a254433d033d83e494fca42c434b4b0b90bf8ccc221c44250b3797341cf1ffdda13ef9caf505c52bcdeadedb471db632ea176775537db2ff68ccb7ef072cfe733ce9e0e47fc49bf37fb7cbf544af45529501b615e1ad7eadd500c484830b",
+    "BASE45": "NCFOXN%TS3DHMRG2FUPNR9/MPV45NL-AH%TAIOOW%IHOT$E08WAWN0%W0AT4V22F/8X*G3M9JUPY0BX/KR96R/S09T./0LWTKD33236J3TA3M*4VV2 73-E3ND3DAJ-43%*48YIB73A*G3W19UEBY5:PI0EGSP4*2D$43B+2SEB7:I/2DY73CIBC:G 7376BXBJBAJ UNFMJCRN0H3PQN*E33H3OA70M3FMJIJN523S+0B/S7-SN2H N37J3JFTULJ5CB3ZCIATULV:SNS8F-67N%21Q21$48X2+36D-I/2DBAJDAJCNB-43SZ4RZ4E%5B/9OK53:UCT16DEZIE IE9.M CVCT1+9V*QERU1MK93P5 U02Y9.G9/G9F:QQ28R3U6/V.*NT*QM.SY$N-P1S29 34S0BYBRC.UYS1U%O6QKN*Q5-QFRMLNKNM8JI0EUGP$I/XK$M8-L9KDI:ZH2E4UR8 I185JTT3QFWDHK1QV+/UU-OJ1Q 7SP:8M1NWQTP3D/OADSM8BDHBN +0O7WNV7HJS%6G8WJP6GDZPXU8GY8U$I%0N%NST0GX-Q/$OMPG",
+    "PREFIX": "HC1:NCFOXN%TS3DHMRG2FUPNR9/MPV45NL-AH%TAIOOW%IHOT$E08WAWN0%W0AT4V22F/8X*G3M9JUPY0BX/KR96R/S09T./0LWTKD33236J3TA3M*4VV2 73-E3ND3DAJ-43%*48YIB73A*G3W19UEBY5:PI0EGSP4*2D$43B+2SEB7:I/2DY73CIBC:G 7376BXBJBAJ UNFMJCRN0H3PQN*E33H3OA70M3FMJIJN523S+0B/S7-SN2H N37J3JFTULJ5CB3ZCIATULV:SNS8F-67N%21Q21$48X2+36D-I/2DBAJDAJCNB-43SZ4RZ4E%5B/9OK53:UCT16DEZIE IE9.M CVCT1+9V*QERU1MK93P5 U02Y9.G9/G9F:QQ28R3U6/V.*NT*QM.SY$N-P1S29 34S0BYBRC.UYS1U%O6QKN*Q5-QFRMLNKNM8JI0EUGP$I/XK$M8-L9KDI:ZH2E4UR8 I185JTT3QFWDHK1QV+/UU-OJ1Q 7SP:8M1NWQTP3D/OADSM8BDHBN +0O7WNV7HJS%6G8WJP6GDZPXU8GY8U$I%0N%NST0GX-Q/$OMPG",
     "TESTCTX": {
         "VERSION": 1,
         "SCHEMA": "1.0.0",
-        "CERTIFICATE": "MIIBWjCCAQCgAwIBAgIFAM35dB0wCgYIKoZIzj0EAwIwEDEOMAwGA1UEAwwFRUMtTWUwHhcNMjEwNTAzMTgwMDAwWhcNMjEwNjAyMTgwMDAwWjAQMQ4wDAYDVQQDDAVFQy1NZTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABB5HI4yjHBVgyEb6iDQYP9xtP8VBoQ6JVjEWGcDEYQlB8LDxYdwrUpwNTT3BRJpRW+84qgwLP+7LQ3Y9kZSwqQGjRzBFMA4GA1UdDwEB/wQEAwIFoDAzBgNVHSUELDAqBgwrBgEEAQCON49lAQEGDCsGAQQBAI43j2UBAgYMKwYBBAEAjjePZQEDMAoGCCqGSM49BAMCA0gAMEUCIQCvm7SBTzlRU9XjW02JEfksU26ll+L12ZSvHg5kQvOJVQIge6//uvQejatCQKvPMdMfQfMdPy1pn3FqAzWffXeZ+ow=",
+        "CERTIFICATE": "MIIBWTCCAQCgAwIBAgIFAK7oh64wCgYIKoZIzj0EAwIwEDEOMAwGA1UEAwwFRUMtTWUwHhcNMjEwNTAzMTgwMDAwWhcNMjEwNjAyMTgwMDAwWjAQMQ4wDAYDVQQDDAVFQy1NZTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABIQ5ERHXUAPDk3phCru13jtRzJnVcwXYd8jCm0wAez9TFnJhHkxGEW0pvQB7FQJkqcr3H4FDsxaf6Z5i55nQcWOjRzBFMA4GA1UdDwEB/wQEAwIFoDAzBgNVHSUELDAqBgwrBgEEAQCON49lAQEGDCsGAQQBAI43j2UBAgYMKwYBBAEAjjePZQEDMAoGCCqGSM49BAMCA0cAMEQCIA6il0H0Shfie72mZBX+F1PbQXA88HCkAF1HZKjIQW8VAiBiIdQGkNxs3+vpcAwRqrRyXel6y2e/M2Qgr4PWy2Ms5g==",
         "VALIDATIONCLOCK": "2021-05-03T20:00:00+02:00",
         "DESCRIPTION": "VALID: EC 256 key"
     },
