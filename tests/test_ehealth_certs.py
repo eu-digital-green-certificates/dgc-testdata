@@ -36,7 +36,7 @@ from cose.keys import CoseKey
 from cose.keys.keyparam import KpAlg, EC2KpX, EC2KpY, EC2KpCurve, RSAKpE, RSAKpN, KpKty, KpKeyOps
 from cose.keys.keyops import VerifyOp
 from cose.keys.keytype import KtyEC2, KtyRSA
-from cose.curves import P256
+from cose.keys.curves import P256
 from cose.messages import Sign1Message
 from cose.headers import KID
 from base64 import b64decode
@@ -59,6 +59,7 @@ from os import path
 from filecache import filecache, DAY
 from jsonschema import validate as schema_validate
 from jsonref import load_uri
+from pytest import mark
 
 
 VERSION = '1.1.0'
@@ -118,8 +119,7 @@ def config_env(request):
         return load(test_file)
 
 
-@fixture
-def dgc(config_env: Dict) -> Sign1Message:
+def _dgc(config_env: Dict) -> Sign1Message:
     if COSE in config_env.keys():
         cbor_bytes = unhexlify(config_env[COSE])
         cbor_object = loads(cbor_bytes)
@@ -194,11 +194,12 @@ def _ordered(obj):
         return obj
 
 
-def test_cose_schema(config_env: Dict, dgc: Sign1Message):
+def test_cose_schema(config_env: Dict):
     if EXPECTED_SCHEMA_VALIDATION not in config_env[EXPECTED_RESULTS].keys() or COSE not in config_env.keys():
         return
-    cose_payload = loads(dgc.payload)
     if config_env[EXPECTED_RESULTS][EXPECTED_SCHEMA_VALIDATION]:
+        dgc = _dgc(config_env)
+        cose_payload = loads(dgc.payload)
         assert PAYLOAD_HCERT in cose_payload.keys()
         assert len(cose_payload[PAYLOAD_HCERT]) == 1
         assert 1 in cose_payload[PAYLOAD_HCERT].keys()
@@ -210,9 +211,10 @@ def test_cose_schema(config_env: Dict, dgc: Sign1Message):
         #     raise Exception(f'Error: Given DSC is not valid to sign HCERT Type: {hcert_type}')
 
 
-def test_cose_json(config_env: Dict, dgc: Sign1Message):
+def test_cose_json(config_env: Dict):
     if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys() or not({COSE, JSON} <= config_env.keys()):
         return
+    dgc = _dgc(config_env)
     cose_payload = loads(dgc.payload)
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
         assert PAYLOAD_HCERT in cose_payload.keys()
@@ -238,11 +240,12 @@ def test_cbor_json(config_env: Dict):
         assert _ordered(cbor_object) != _ordered(config_env[JSON])
 
 
-def test_cose_cbor(config_env: Dict, dgc: Sign1Message):
+def test_cose_cbor(config_env: Dict):
     if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys() or not({COSE, CBOR} <= config_env.keys()):
         return
     cbor_bytes = unhexlify(config_env[CBOR])
     cbor_payload = loads(cbor_bytes)
+    dgc = _dgc(config_env)
     cose_payload = loads(dgc.payload)
 
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
@@ -253,8 +256,16 @@ def test_cose_cbor(config_env: Dict, dgc: Sign1Message):
         assert not _ordered(cbor_payload) == _ordered(cose_payload)
 
 
-def test_verification_check(config_env: Dict, dgc: Sign1Message, dsc):
+def test_verification_check(config_env: Dict, dsc):
     if EXPECTED_VERIFY in config_env[EXPECTED_RESULTS].keys():
+        try:
+            dgc = _dgc(config_env)
+        except Exception as ex:
+            if config_env[EXPECTED_RESULTS][EXPECTED_VERIFY]:
+                assert False, str(ex)
+            else:
+                return
+
         given_kid = None
         if COSE in config_env.keys():
             if KID in dgc.phdr.keys():
@@ -262,15 +273,15 @@ def test_verification_check(config_env: Dict, dgc: Sign1Message, dsc):
             else:
                 given_kid = dgc.uhdr[KID]
         if config_env[EXPECTED_RESULTS][EXPECTED_VERIFY]:
-            assert dsc[1] == given_kid
+            assert given_kid == dsc[1], f'Invalid COSE kid value {given_kid}'
             dgc.key = dsc[0]
-            assert dgc.verify_signature()
+            assert dgc.verify_signature(), 'Could not validate DGC Signature'
         elif dgc and dsc and dsc[0]:
             dgc.key = dsc[0]
             assert not all((dsc[1] == given_kid, dgc.verify_signature()))
 
 
-def test_expiration_check(config_env: Dict, dgc: Sign1Message, dsc):
+def test_expiration_check(config_env: Dict, dsc):
     dsc_not_valid_before, dsc_not_valid_after = dsc[3], dsc[4]
     if EXPECTED_EXPIRATION_CHECK not in config_env[EXPECTED_RESULTS].keys():
         return
@@ -278,6 +289,7 @@ def test_expiration_check(config_env: Dict, dgc: Sign1Message, dsc):
         validation_clock = parser.isoparse(config_env[TEST_CONTEXT][VALIDATION_CLOCK])
     else:
         validation_clock = datetime.utcnow()
+    dgc = _dgc(config_env)
     decoded_payload = loads(dgc.payload)
     assert {PAYLOAD_EXPIRY_DATE, PAYLOAD_ISSUE_DATE} <= decoded_payload.keys(), \
         f'COSE Payload is missing expiry date: {PAYLOAD_EXPIRY_DATE} and/or issue date: {PAYLOAD_ISSUE_DATE}.'
@@ -321,6 +333,7 @@ def test_un_prefix(config_env: Dict):
             assert not (f"HC1:{config_env[BASE45]}" == config_env[PREFIX])
 
 
+# @mark.skip
 def test_picture_decode(config_env: Dict):
     if EXPECTED_PICTURE_DECODE in config_env[EXPECTED_RESULTS].keys() and {QR_CODE, PREFIX} <= config_env.keys():
         if config_env[EXPECTED_RESULTS][EXPECTED_PICTURE_DECODE]:
