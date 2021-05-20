@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python package
+name: DGC Test Data Verification
 
 on:
   push:
@@ -38,9 +38,12 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest --md-report --md-report-verbose=1 --html=test_report.html
+        pytest --md-report --md-report-verbose=1 --html=dgc_testdata_report.html
     - name: Upload pytest test results
       uses: actions/upload-artifact@v2
       with:
-        path: test_report.html
+        name: dgc-testdata-report
+        path: |
+          dgc_testdata_report.html
+          style.css
       if: ${{ always() }}
