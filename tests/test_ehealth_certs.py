@@ -48,7 +48,7 @@ from typing import Dict
 from cryptography import x509
 from cryptography.utils import int_to_bytes
 from cryptography.x509 import ExtensionNotFound
-from cryptography.x509.oid import SignatureAlgorithmOID
+# from cryptography.x509.oid import SignatureAlgorithmOID
 from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.hazmat.primitives.hashes import SHA256
 
@@ -59,7 +59,7 @@ from os import path
 from filecache import filecache, DAY
 from jsonschema import validate as schema_validate
 from jsonref import load_uri
-from pytest import mark
+# from pytest import mark
 
 
 VERSION = '1.1.0'
