@@ -27,7 +27,7 @@
 # pip install wheel base45 jsonschema jsonref filecache cose pytest pyzbar Pillow python-dateutil
 
 from pathlib import Path
-from pytest import fixture
+from pytest import fixture, skip
 from glob import glob
 from binascii import hexlify, unhexlify
 from cbor2 import loads, CBORTag
@@ -117,7 +117,9 @@ def pytest_generate_tests(metafunc):
 @fixture
 def config_env(request):
     with open(request.param, encoding='utf8') as test_file:
-        return load(test_file)
+        config_env = load(test_file)
+        config_env['CO'] = Path(request.param).parts[-4]
+        return config_env
 
 
 def _dgc(config_env: Dict) -> Sign1Message:
@@ -196,8 +198,12 @@ def _ordered(obj):
 
 
 def test_cose_schema(config_env: Dict):
-    if EXPECTED_SCHEMA_VALIDATION not in config_env[EXPECTED_RESULTS].keys() or COSE not in config_env.keys():
-        return
+    if EXPECTED_SCHEMA_VALIDATION not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_SCHEMA_VALIDATION}')
+    if COSE not in config_env.keys():
+        skip(f'Test dataset does not contain {COSE}')
+    if config_env['CO'] == 'NL':
+        skip('Issue: NL: EXPECTEDSCHEMAVALIDATION #107')
     if config_env[EXPECTED_RESULTS][EXPECTED_SCHEMA_VALIDATION]:
         dgc = _dgc(config_env)
         cose_payload = loads(dgc.payload)
@@ -213,8 +219,10 @@ def test_cose_schema(config_env: Dict):
 
 
 def test_cose_json(config_env: Dict):
-    if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys() or not({COSE, JSON} <= config_env.keys()):
-        return
+    if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_DECODE}')
+    if not({COSE, JSON} <= config_env.keys()):
+        skip(f'Test dataset does not contain {COSE} and/or {JSON}')
     dgc = _dgc(config_env)
     cose_payload = loads(dgc.payload)
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
@@ -228,8 +236,10 @@ def test_cose_json(config_env: Dict):
 
 
 def test_cbor_json(config_env: Dict):
-    if EXPECTED_VALID_JSON not in config_env[EXPECTED_RESULTS].keys() or not({JSON, CBOR} <= config_env.keys()):
-        return
+    if EXPECTED_VALID_JSON not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_VALID_JSON}')
+    if not({CBOR, JSON} <= config_env.keys()):
+        skip(f'Test dataset does not contain {CBOR} and/or {JSON}')
     cbor_bytes = unhexlify(config_env[CBOR])
     cbor_object = loads(cbor_bytes)
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
@@ -242,8 +252,10 @@ def test_cbor_json(config_env: Dict):
 
 
 def test_cose_cbor(config_env: Dict):
-    if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys() or not({COSE, CBOR} <= config_env.keys()):
-        return
+    if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_DECODE}')
+    if not({CBOR, COSE} <= config_env.keys()):
+        skip(f'Test dataset does not contain {CBOR} and/or {COSE}')
     cbor_bytes = unhexlify(config_env[CBOR])
     cbor_payload = loads(cbor_bytes)
     dgc = _dgc(config_env)
@@ -258,34 +270,44 @@ def test_cose_cbor(config_env: Dict):
 
 
 def test_verification_check(config_env: Dict, dsc):
-    if EXPECTED_VERIFY in config_env[EXPECTED_RESULTS].keys():
-        try:
-            dgc = _dgc(config_env)
-        except Exception as ex:
-            if config_env[EXPECTED_RESULTS][EXPECTED_VERIFY]:
-                assert False, str(ex)
-            else:
-                return
-
-        given_kid = None
-        if COSE in config_env.keys():
-            if KID in dgc.phdr.keys():
-                given_kid = dgc.phdr[KID]
-            else:
-                given_kid = dgc.uhdr[KID]
+    if EXPECTED_VERIFY not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_VERIFY}')
+    if COSE not in config_env.keys():
+        skip(f'Test dataset does not contain {COSE}')
+    if TEST_CONTEXT not in config_env.keys() or CERTIFICATE not in config_env[TEST_CONTEXT].keys():
+        skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
+    try:
+        dgc = _dgc(config_env)
+    except Exception as ex:
         if config_env[EXPECTED_RESULTS][EXPECTED_VERIFY]:
-            assert given_kid == dsc[1], f'Invalid COSE kid value {given_kid}'
-            dgc.key = dsc[0]
-            assert dgc.verify_signature(), 'Could not validate DGC Signature'
-        elif dgc and dsc and dsc[0]:
-            dgc.key = dsc[0]
-            assert not all((dsc[1] == given_kid, dgc.verify_signature()))
+            assert False, str(ex)
+        else:
+            return
+
+    given_kid = None
+    if COSE in config_env.keys():
+        if KID in dgc.phdr.keys():
+            given_kid = dgc.phdr[KID]
+        else:
+            given_kid = dgc.uhdr[KID]
+    if config_env[EXPECTED_RESULTS][EXPECTED_VERIFY]:
+        assert given_kid == dsc[1], f'Invalid COSE kid value {given_kid}'
+        dgc.key = dsc[0]
+        assert dgc.verify_signature(), 'Could not validate DGC Signature'
+    elif dgc and dsc and dsc[0]:
+        dgc.key = dsc[0]
+        assert not all((dsc[1] == given_kid, dgc.verify_signature()))
 
 
 def test_expiration_check(config_env: Dict, dsc):
-    dsc_not_valid_before, dsc_not_valid_after = dsc[3], dsc[4]
     if EXPECTED_EXPIRATION_CHECK not in config_env[EXPECTED_RESULTS].keys():
-        return
+        skip(f'Test not requested: {EXPECTED_EXPIRATION_CHECK}')
+    if COSE not in config_env.keys():
+        skip(f'Test dataset does not contain {COSE}')
+    if TEST_CONTEXT not in config_env.keys() or CERTIFICATE not in config_env[TEST_CONTEXT].keys():
+        skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
+
+    dsc_not_valid_before, dsc_not_valid_after = dsc[3], dsc[4]
     if TEST_CONTEXT in config_env.keys() and VALIDATION_CLOCK in config_env[TEST_CONTEXT].keys():
         validation_clock = parser.isoparse(config_env[TEST_CONTEXT][VALIDATION_CLOCK])
     else:
@@ -311,11 +333,14 @@ def test_expiration_check(config_env: Dict, dsc):
 
 
 def test_b45decode(config_env: Dict):
-    if EXPECTED_B45DECODE in config_env[EXPECTED_RESULTS].keys() and {BASE45, COMPRESSED} <= config_env.keys():
-        if config_env[EXPECTED_RESULTS][EXPECTED_B45DECODE]:
-            assert (_get_compressed(config_env[BASE45]) == config_env[COMPRESSED].lower())
-        else:
-            assert not (_get_compressed(config_env[BASE45]) == config_env[COMPRESSED].lower())
+    if EXPECTED_B45DECODE not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_B45DECODE}')
+    if not({BASE45, COMPRESSED} <= config_env.keys()):
+        skip(f'Test dataset does not contain {BASE45} and/or {COMPRESSED}')
+    if config_env[EXPECTED_RESULTS][EXPECTED_B45DECODE]:
+        assert (_get_compressed(config_env[BASE45]) == config_env[COMPRESSED].lower())
+    else:
+        assert not (_get_compressed(config_env[BASE45]) == config_env[COMPRESSED].lower())
 
 
 def _get_compressed(base45_code):
@@ -327,20 +352,26 @@ def _get_compressed(base45_code):
 
 
 def test_un_prefix(config_env: Dict):
-    if EXPECTED_UN_PREFIX in config_env[EXPECTED_RESULTS].keys() and {BASE45, PREFIX} <= config_env.keys():
-        if config_env[EXPECTED_RESULTS][EXPECTED_UN_PREFIX]:
-            assert (f"HC1:{config_env[BASE45]}" == config_env[PREFIX])
-        else:
-            assert not (f"HC1:{config_env[BASE45]}" == config_env[PREFIX])
+    if EXPECTED_UN_PREFIX not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_UN_PREFIX}')
+    if not({BASE45, PREFIX} <= config_env.keys()):
+        skip(f'Test dataset does not contain {BASE45} and/or {PREFIX}')
+    if config_env[EXPECTED_RESULTS][EXPECTED_UN_PREFIX]:
+        assert (f"HC1:{config_env[BASE45]}" == config_env[PREFIX])
+    else:
+        assert not (f"HC1:{config_env[BASE45]}" == config_env[PREFIX])
 
 
-# @mark.skip
 def test_picture_decode(config_env: Dict):
-    if EXPECTED_PICTURE_DECODE in config_env[EXPECTED_RESULTS].keys() and {QR_CODE, PREFIX} <= config_env.keys():
-        if config_env[EXPECTED_RESULTS][EXPECTED_PICTURE_DECODE]:
-            assert (_get_code_content(config_env[QR_CODE]) == config_env[PREFIX])
-        else:
-            assert not (_get_code_content(config_env[QR_CODE]) == config_env[PREFIX])
+    if EXPECTED_PICTURE_DECODE not in config_env[EXPECTED_RESULTS].keys():
+        skip(f'Test not requested: {EXPECTED_PICTURE_DECODE}')
+    if not({QR_CODE, PREFIX} <= config_env.keys()):
+        skip(f'Test dataset does not contain {QR_CODE} and/or {PREFIX}')
+
+    if config_env[EXPECTED_RESULTS][EXPECTED_PICTURE_DECODE]:
+        assert (_get_code_content(config_env[QR_CODE]) == config_env[PREFIX])
+    else:
+        assert not (_get_code_content(config_env[QR_CODE]) == config_env[PREFIX])
 
 
 def _get_code_content(base64_image):
