@@ -7,18 +7,17 @@
     "gnt": "MENEKSES"
   },
   "dob": "1959-10-12",
-  "v": [
+  "t": [
     {
       "tg": "840539006",
-      "vp": "J07BX03",
-      "mp": "EU/1/20/1528",
-      "ma": "ORG-100030215",
-      "dn": 1,
-      "sd": 2,
-      "dt": "2021-01-21",
+      "tt": "LP2171198-3",
+      "sc": "2021-05-20T10:05:32Z",
+      "dr": "2021-05-20T15:35:07Z",
+      "tr": "260415000",
+      "tc": "Testing center Vienna 1",
       "co": "GR",
       "is": "Ministry of Health",
-      "ci": "urn:uvci:01:GR:78J239D5#2"
+      "ci": "urn:uvci:01:GR:9X5D838D5"
     }
   ]
 }
