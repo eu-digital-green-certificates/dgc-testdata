@@ -38,7 +38,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junit-xml pytest.xml
+        pytest --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junitxml=pytest.xml
     - name: Upload pytest test results
       uses: actions/upload-artifact@v2
       with:
@@ -48,7 +48,7 @@ jobs:
       if: ${{ always() }}
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
-      if: ${{ always() }}
+      if: always()
       with:
         files: pytest.xml
     
