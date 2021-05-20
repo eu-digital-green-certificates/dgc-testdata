@@ -108,7 +108,8 @@ def pytest_generate_tests(metafunc):
         file_name = metafunc.config.getoption("file_name")
         print(country_code, file_name)
         test_dir = path.dirname(path.abspath(__file__))
-        test_files = glob(rf'{test_dir}\..\{country_code}\*\*\{file_name}.json', recursive=True)
+        test_files = glob(str(Path(test_dir, '..', country_code, '*', '*', f'{file_name}.json')), recursive=True)
+        # test_files = glob(f'{test_dir}\\..\\{country_code}\\*\\*\\{file_name}.json', recursive=True)
         ids = [Path(*Path(test_file).parts[-4:]).as_posix() for test_file in test_files]
         metafunc.parametrize("config_env", test_files, indirect=True, ids=ids)
 
