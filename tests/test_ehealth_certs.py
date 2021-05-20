@@ -54,11 +54,10 @@ from cose.keys.keyparam import KpAlg, EC2KpX, EC2KpY, EC2KpCurve, RSAKpE, RSAKpN
 from cose.keys.keytype import KtyEC2, KtyRSA
 from cose.messages import Sign1Message
 from cryptography import x509
-# from cryptography.hazmat.primitives.asymmetric import ec, rsa
+from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.hazmat.primitives.hashes import SHA256
 from cryptography.utils import int_to_bytes
 from cryptography.x509 import ExtensionNotFound
-from cryptography.x509.oid import SignatureAlgorithmOID
 from dateutil import parser
 from filecache import filecache, DAY
 from jsonref import load_uri
@@ -169,12 +168,10 @@ def _dsc(config_env: Dict):
         fingerprint = cert.fingerprint(SHA256())
         keyid = fingerprint[0:8]
 
-        if cert.signature_algorithm_oid == SignatureAlgorithmOID.RSA_WITH_SHA256:
-            # if isinstance(cert.public_key(), rsa.RSAPublicKey):
+        if isinstance(cert.public_key(), rsa.RSAPublicKey):
             e = int_to_bytes(cert.public_key().public_numbers().e)
             n = int_to_bytes(cert.public_key().public_numbers().n)
-        elif cert.signature_algorithm_oid == SignatureAlgorithmOID.ECDSA_WITH_SHA256:
-            # elif isinstance(cert.public_key(), ec.EllipticCurvePublicKey):
+        elif isinstance(cert.public_key(), ec.EllipticCurvePublicKey):
             x = int_to_bytes(cert.public_key().public_numbers().x)
             y = int_to_bytes(cert.public_key().public_numbers().y)
         else:
