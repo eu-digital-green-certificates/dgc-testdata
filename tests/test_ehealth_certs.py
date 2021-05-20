@@ -24,7 +24,7 @@
 #
 # Dependencies:
 # Python 3.9
-# pip install wheel base45 jsonschema jsonref filecache cose pytest pyzbar Pillow python-dateutil
+# pip install -r tests/requirements.txt
 #
 # Usage:
 # To run all tests: pytest
@@ -41,7 +41,7 @@ from io import BytesIO
 from json import load
 from os import path
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 from PIL.Image import open as image_open
 from base45 import b45decode
 from cbor2 import loads, CBORTag
@@ -54,10 +54,11 @@ from cose.keys.keyparam import KpAlg, EC2KpX, EC2KpY, EC2KpCurve, RSAKpE, RSAKpN
 from cose.keys.keytype import KtyEC2, KtyRSA
 from cose.messages import Sign1Message
 from cryptography import x509
-from cryptography.hazmat.primitives.asymmetric import ec, rsa
+# from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.hazmat.primitives.hashes import SHA256
 from cryptography.utils import int_to_bytes
 from cryptography.x509 import ExtensionNotFound
+from cryptography.x509.oid import SignatureAlgorithmOID
 from dateutil import parser
 from filecache import filecache, DAY
 from jsonref import load_uri
@@ -135,10 +136,13 @@ def known_issues():
 def xfail_known_issues(request, known_issues: Dict[str, str], config_env: Dict):
     lookup_key1 = f'{request.node.originalname}:{config_env["CO"]}:{config_env["FN"]}'
     lookup_key2 = f'{request.node.originalname}:{config_env["CO"]}:'
+    lookup_key3 = f':{config_env["CO"]}:{config_env["FN"]}'
     if lookup_key1 in known_issues.keys():
         request.applymarker(mark.xfail(reason=known_issues[lookup_key1]))
     elif lookup_key2 in known_issues.keys():
         request.applymarker(mark.xfail(reason=known_issues[lookup_key2]))
+    elif lookup_key3 in known_issues.keys():
+        request.applymarker(mark.xfail(reason=known_issues[lookup_key3]))
 
 
 def _dgc(config_env: Dict) -> Sign1Message:
@@ -165,12 +169,12 @@ def _dsc(config_env: Dict):
         fingerprint = cert.fingerprint(SHA256())
         keyid = fingerprint[0:8]
 
-        # if cert.signature_algorithm_oid == SignatureAlgorithmOID.RSA_WITH_SHA256:
-        if isinstance(cert.public_key(), rsa.RSAPublicKey):
+        if cert.signature_algorithm_oid == SignatureAlgorithmOID.RSA_WITH_SHA256:
+            # if isinstance(cert.public_key(), rsa.RSAPublicKey):
             e = int_to_bytes(cert.public_key().public_numbers().e)
             n = int_to_bytes(cert.public_key().public_numbers().n)
-        # elif cert.signature_algorithm_oid == SignatureAlgorithmOID.ECDSA_WITH_SHA256:
-        elif isinstance(cert.public_key(), ec.EllipticCurvePublicKey):
+        elif cert.signature_algorithm_oid == SignatureAlgorithmOID.ECDSA_WITH_SHA256:
+            # elif isinstance(cert.public_key(), ec.EllipticCurvePublicKey):
             x = int_to_bytes(cert.public_key().public_numbers().x)
             y = int_to_bytes(cert.public_key().public_numbers().y)
         else:
@@ -237,7 +241,7 @@ def test_compression(config_env: Dict):
         assert decompressed_cbor_bytes != cbor_bytes
 
 
-def test_cose_schema(request, config_env: Dict):
+def test_cose_schema(config_env: Dict):
     if EXPECTED_SCHEMA_VALIDATION not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_SCHEMA_VALIDATION}')
     if COSE not in config_env.keys():
@@ -252,9 +256,6 @@ def test_cose_schema(request, config_env: Dict):
         hcert = cose_payload[PAYLOAD_HCERT][1]
         schema_validate(hcert, _get_hcert_schema())
         assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1, 'DGC adheres to schema but contains multiple certificates'
-        # hcert_type = (set(hcert.keys()) & {'v', 'r', 't'}).pop()
-        # if dsc_supported_operations and not (dsc_supported_operations & CERT_VALIDITY_MAP[hcert_type]):
-        #     raise Exception(f'Error: Given DSC is not valid to sign HCERT Type: {hcert_type}')
 
 
 def test_cose_json(config_env: Dict):
@@ -308,7 +309,7 @@ def test_cose_cbor(config_env: Dict):
         assert not _ordered(cbor_payload) == _ordered(cose_payload)
 
 
-def test_verification_check(request, config_env: Dict):
+def test_verification_check(config_env: Dict):
     if EXPECTED_VERIFY not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_VERIFY}')
     if COSE not in config_env.keys():
