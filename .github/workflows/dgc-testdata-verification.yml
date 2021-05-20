@@ -31,17 +31,17 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+    - name: Validate DGC Test Data
       run: |
         pytest --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junitxml=pytest.xml
-    - name: Upload pytest test results
+    - name: Upload DGC Test Data Validation Results
       uses: actions/upload-artifact@v2
       with:
         name: dgc-testdata-report
         path: |
           dgc_testdata_report.html
       if: ${{ always() }}
-    - name: Publish Unit Test Results
+    - name: Publish DGC Test Data Validation Results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
       with:
