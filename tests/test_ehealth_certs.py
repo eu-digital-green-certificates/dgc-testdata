@@ -127,7 +127,10 @@ def _dgc(config_env: Dict) -> Sign1Message:
         cbor_bytes = unhexlify(config_env[COSE])
         cbor_object = loads(cbor_bytes)
         if isinstance(cbor_object, CBORTag):  # Tagged Cose Object
-            decoded = Sign1Message.decode(cbor_bytes)
+            if isinstance(cbor_object.value, CBORTag):  # Double Tagged Cose Object
+                decoded = Sign1Message.from_cose_obj(cbor_object.value.value)
+            else:
+                decoded = Sign1Message.decode(cbor_bytes)
         else:  # Un-tagged Cose Object
             decoded = Sign1Message.from_cose_obj(cbor_object)
         return decoded
