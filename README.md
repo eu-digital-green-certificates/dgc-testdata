@@ -1,4 +1,16 @@
-# DGC Test Data Repository for Test Automation
+<h1 align="center">
+ Digital Green Certificates: Test Data Repository for Test Automation
+</h1>
+
+<p align="center">
+    <a href="#about">About</a> •
+    <a href="#testing--status">Testing & Status</a> •
+    <a href="#2d-code">2D Code</a> •
+    <a href="#how-to-contribute">How to Contribute</a> •
+    <a href="#licensing">Licensing</a>
+</p>
+
+## About
 
 To automate the generation and validation tests of COSE/CBOR Codes and it's base45/2D Code representations, a lot of data has to be collected to ensure the variance of the tests. This respository was established to collect a lot of different test data and related test cases of different member states in a standardized manner. Each member state can generate a folder in this section. 
 
@@ -198,3 +210,20 @@ Contains images of the generated base45 contents(PNG).
 ### Certificate Content
 
 The public key to validate the data structure. This is defined as base64 encoded datastructure (PEM).
+
+## How to contribute  
+
+Contribution and feedback is encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](./CONTRIBUTING.md). By participating in this project, you agree to abide by its [Code of Conduct](./CODE_OF_CONDUCT.md) at all times.
+
+
+## Licensing
+
+Copyright (C) 2021 T-Systems International GmbH and all other contributors
+
+Licensed under the **Apache License, Version 2.0** (the "License"); you may not use this file except in compliance with the License.
+
+You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0.
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" 
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](./LICENSE) for the specific 
+language governing permissions and limitations under the License.
