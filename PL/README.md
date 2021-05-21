@@ -17,3 +17,10 @@ All tests should be successful.
 All tests should be successful.
 
 ![2](png/2.png)
+
+### Recovery test
+
+[3.json](2DCode/raw/3.json) - DGC with recovery entry.
+All tests should be successful.
+
+![3](png/3.png)
