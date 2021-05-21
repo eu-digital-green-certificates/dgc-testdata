@@ -42,3 +42,8 @@ test_expiration_check,PL,1,https://github.com/eu-digital-green-certificates/dgc-
 ,DE,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/119
 ,DE,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/119
 test_verification_check,common,CO28,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/160
+,CZ,1,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
+,CZ,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
+,CZ,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
+,CZ,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
+,CZ,5,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
