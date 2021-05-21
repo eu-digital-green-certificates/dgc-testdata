@@ -24,3 +24,10 @@ All tests should be successful.
 All tests should be successful.
 
 ![3](png/3.png)
+
+### Laboratory Test
+
+[4.json](2DCode/raw/4.json) - DGC with NAA test entry.
+All tests should be successful.
+
+![4](png/4.png)
