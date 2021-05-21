@@ -2,7 +2,7 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: DGC Test Data Verification
-on: [push, pull_request, workflow_dispatch]
+on: [workflow_dispatch]
 
 jobs:
   build:
@@ -42,7 +42,7 @@ jobs:
           dgc_testdata_report.html
       if: ${{ always() }}
     - name: Publish DGC Test Data Validation Results
-      uses: EnricoMi/publish-unit-test-result-action@v1
+      uses: eu-digital-green-certificates/publish-unit-test-result-action@v1
       if: always()
       with:
         files: pytest.xml
