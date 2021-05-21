@@ -1,0 +1,51 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: DGC Test Data Verification
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        sudo apt-get install libzbar0        
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Validate DGC Test Data
+      run: |
+        pytest --tb=short -rfEx --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junit-xml=pytest.xml
+    - name: Upload DGC Test Data Validation Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: dgc-testdata-report
+        path: |
+          dgc_testdata_report.html
+      if: ${{ always() }}
+    - name: Publish DGC Test Data Validation Results
+      uses: eu-digital-green-certificates/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: pytest.xml
+    
+
+
