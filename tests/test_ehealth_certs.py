@@ -45,6 +45,8 @@ from io import BytesIO
 from json import load
 from os import path
 from pathlib import Path
+from re import split
+from traceback import format_exc
 from typing import Dict
 from PIL.Image import open as image_open
 from base45 import b45decode
@@ -70,7 +72,6 @@ from pytest import fixture, skip, fail
 from pytest import mark
 from pyzbar.pyzbar import decode as bar_decode
 from zlib import decompress
-
 
 PAYLOAD_ISSUER, PAYLOAD_ISSUE_DATE, PAYLOAD_EXPIRY_DATE, PAYLOAD_HCERT = 1, 6, 4, -260
 CERT_VALIDITY_MAP = {'t': {'1.3.6.1.4.1.0.1847.2021.1.1', '1.3.6.1.4.1.1847.2021.1.1'},
@@ -99,6 +100,7 @@ VALIDATION_CLOCK = 'VALIDATIONCLOCK'
 QR_CODE = '2DCODE'
 PREFIX = 'PREFIX'
 BASE45 = 'BASE45'
+CONFIG_ERROR = 'CONFIG_ERROR'
 
 
 @filecache(DAY)
@@ -112,20 +114,11 @@ def pytest_generate_tests(metafunc):
         country_code = metafunc.config.getoption("country_code")
         file_name = metafunc.config.getoption("file_name")
         print(country_code, file_name)
-        test_dir = path.dirname(path.abspath(__file__))
-        test_files = glob(str(Path(test_dir, '..', country_code, '*', '*', f'{file_name}.json')), recursive=True)
+        test_dir = path.dirname(path.dirname(path.abspath(__file__)))
+        test_files = glob(str(Path(test_dir, country_code, '*', '*', f'{file_name}.json')), recursive=True)
         # test_files = glob(f'{test_dir}\\..\\{country_code}\\*\\*\\{file_name}.json', recursive=True)
         ids = [Path(*Path(test_file).parts[-4:]).as_posix() for test_file in test_files]
         metafunc.parametrize("config_env", test_files, indirect=True, ids=ids)
-
-
-@fixture
-def config_env(request):
-    with open(request.param, encoding='utf8') as test_file:
-        config_env = load(test_file)
-        config_env['CO'] = Path(request.param).parts[-4]
-        config_env['FN'] = Path(request.param).parts[-1].split('.')[0]
-        return config_env
 
 
 @fixture(scope='session')
@@ -135,17 +128,38 @@ def known_issues():
                 for known_issue in DictReader(know_issue_file)}  # test_name,country,test_set,reason
 
 
+@fixture
+def known_issue(request, known_issues: Dict[str, str]) -> str:
+    test_function_name, country_code, *_, test_file_name, _, _ = tuple(split(r'[./\]\[]', request.node.name))
+    if f'{test_function_name}:{country_code}:{test_file_name}' in known_issues.keys():
+        return known_issues[f'{test_function_name}:{country_code}:{test_file_name}']
+    if f'{test_function_name}:{country_code}:' in known_issues.keys():
+        return known_issues[f'{test_function_name}:{country_code}:']
+    if f':{country_code}:{test_file_name}' in known_issues.keys():
+        return known_issues[f':{country_code}:{test_file_name}']
+    if f':{country_code}:' in known_issues.keys():
+        return known_issues[f':{country_code}:']
+    return ""
+
+
+@fixture
+def config_env(request, known_issue: str):
+    # noinspection PyBroadException
+    try:
+        with open(request.param, encoding='utf8') as test_file:
+            config_env = load(test_file)
+            return config_env
+    except Exception as ex:
+        if not known_issue:
+            raise
+        else:
+            return {CONFIG_ERROR: format_exc()}
+
+
 @fixture(autouse=True)
-def xfail_known_issues(request, known_issues: Dict[str, str], config_env: Dict):
-    lookup_key1 = f'{request.node.originalname}:{config_env["CO"]}:{config_env["FN"]}'
-    lookup_key2 = f'{request.node.originalname}:{config_env["CO"]}:'
-    lookup_key3 = f':{config_env["CO"]}:{config_env["FN"]}'
-    if lookup_key1 in known_issues.keys():
-        request.applymarker(mark.xfail(reason=known_issues[lookup_key1]))
-    elif lookup_key2 in known_issues.keys():
-        request.applymarker(mark.xfail(reason=known_issues[lookup_key2]))
-    elif lookup_key3 in known_issues.keys():
-        request.applymarker(mark.xfail(reason=known_issues[lookup_key3]))
+def xfail_known_issues(request, known_issue: str):
+    if known_issue:
+        request.applymarker(mark.xfail(reason=known_issue))
 
 
 def _dgc(config_env: Dict) -> Sign1Message:
@@ -224,9 +238,11 @@ def _ordered(obj):
 
 
 def test_compression(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_COMPRESSION not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_COMPRESSION}')
-    if not({COSE, COMPRESSED} <= config_env.keys()):
+    if not ({COSE, COMPRESSED} <= config_env.keys()):
         skip(f'Test dataset does not contain {COSE} and/or {COMPRESSED}')
     cbor_bytes = unhexlify(config_env[COSE])
     zip_bytes = unhexlify(config_env[COMPRESSED])
@@ -243,6 +259,8 @@ def test_compression(config_env: Dict):
 
 
 def test_cose_schema(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_SCHEMA_VALIDATION not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_SCHEMA_VALIDATION}')
     if COSE not in config_env.keys():
@@ -260,9 +278,11 @@ def test_cose_schema(config_env: Dict):
 
 
 def test_cose_json(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_DECODE}')
-    if not({COSE, JSON} <= config_env.keys()):
+    if not ({COSE, JSON} <= config_env.keys()):
         skip(f'Test dataset does not contain {COSE} and/or {JSON}')
     dgc = _dgc(config_env)
     cose_payload = loads(dgc.payload)
@@ -277,15 +297,17 @@ def test_cose_json(config_env: Dict):
 
 
 def test_cbor_json(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_VALID_JSON not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_VALID_JSON}')
-    if not({CBOR, JSON} <= config_env.keys()):
+    if not ({CBOR, JSON} <= config_env.keys()):
         skip(f'Test dataset does not contain {CBOR} and/or {JSON}')
     cbor_bytes = unhexlify(config_env[CBOR])
     cbor_object = loads(cbor_bytes)
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
         # assert PAYLOAD_HCERT in cbor_object.keys()
-        if PAYLOAD_HCERT in cbor_object.keys():   # Hack in order to match different level of CBOR Payload
+        if PAYLOAD_HCERT in cbor_object.keys():  # Hack in order to match different level of CBOR Payload
             cbor_object = cbor_object[PAYLOAD_HCERT][1]
         assert _ordered(cbor_object) == _ordered(config_env[JSON])
     else:
@@ -293,9 +315,11 @@ def test_cbor_json(config_env: Dict):
 
 
 def test_cose_cbor(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_DECODE not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_DECODE}')
-    if not({CBOR, COSE} <= config_env.keys()):
+    if not ({CBOR, COSE} <= config_env.keys()):
         skip(f'Test dataset does not contain {CBOR} and/or {COSE}')
     cbor_bytes = unhexlify(config_env[CBOR])
     cbor_payload = loads(cbor_bytes)
@@ -311,6 +335,8 @@ def test_cose_cbor(config_env: Dict):
 
 
 def test_verification_check(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_VERIFY not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_VERIFY}')
     if COSE not in config_env.keys():
@@ -344,6 +370,8 @@ def test_verification_check(config_env: Dict):
 
 
 def test_expiration_check(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_EXPIRATION_CHECK not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_EXPIRATION_CHECK}')
     if COSE not in config_env.keys():
@@ -379,6 +407,8 @@ def test_expiration_check(config_env: Dict):
 
 
 def test_expected_key_usage(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_KEY_USAGE not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_KEY_USAGE}')
     if COSE not in config_env.keys():
@@ -409,9 +439,11 @@ def test_expected_key_usage(config_env: Dict):
 
 
 def test_b45decode(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_B45DECODE not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_B45DECODE}')
-    if not({BASE45, COMPRESSED} <= config_env.keys()):
+    if not ({BASE45, COMPRESSED} <= config_env.keys()):
         skip(f'Test dataset does not contain {BASE45} and/or {COMPRESSED}')
     if config_env[EXPECTED_RESULTS][EXPECTED_B45DECODE]:
         assert (_get_compressed(config_env[BASE45]) == config_env[COMPRESSED].lower())
@@ -428,9 +460,11 @@ def _get_compressed(base45_code):
 
 
 def test_un_prefix(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_UN_PREFIX not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_UN_PREFIX}')
-    if not({BASE45, PREFIX} <= config_env.keys()):
+    if not ({BASE45, PREFIX} <= config_env.keys()):
         skip(f'Test dataset does not contain {BASE45} and/or {PREFIX}')
     if config_env[EXPECTED_RESULTS][EXPECTED_UN_PREFIX]:
         assert (f"HC1:{config_env[BASE45]}" == config_env[PREFIX])
@@ -439,9 +473,11 @@ def test_un_prefix(config_env: Dict):
 
 
 def test_picture_decode(config_env: Dict):
+    if CONFIG_ERROR in config_env.keys():
+        fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_PICTURE_DECODE not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_PICTURE_DECODE}')
-    if not({QR_CODE, PREFIX} <= config_env.keys()):
+    if not ({QR_CODE, PREFIX} <= config_env.keys()):
         skip(f'Test dataset does not contain {QR_CODE} and/or {PREFIX}')
 
     if config_env[EXPECTED_RESULTS][EXPECTED_PICTURE_DECODE]:
