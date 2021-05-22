@@ -27,11 +27,15 @@ test_cose_json,ES,2102,https://github.com/eu-digital-green-certificates/dgc-test
 test_cose_json,ES,2103,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
 test_cose_cbor,ES,102,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
 test_cose_cbor,ES,1203,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
-,ES,2002,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/165
+,ES,2001,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/165
 ,ES,2002,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/165
 ,BE,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/150
 ,FR,test_pcr_ok,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/141
-test_expiration_check,PL,1,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/130
+test_expiration_check,PL,1,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/188
+test_cose_json,PL,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/189
+test_cose_json,PL,5,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/189
+test_cbor_json,PL,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/189
+test_cbor_json,PL,5,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/189
 ,PT,1,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/151
 ,PT,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/151
 ,PT,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/151
