@@ -143,17 +143,14 @@ def known_issue(request, known_issues: Dict[str, str]) -> str:
 
 
 @fixture
-def config_env(request, known_issue: str):
+def config_env(request):
     # noinspection PyBroadException
     try:
         with open(request.param, encoding='utf8') as test_file:
             config_env = load(test_file)
             return config_env
-    except Exception as ex:
-        if not known_issue:
-            raise
-        else:
-            return {CONFIG_ERROR: format_exc()}
+    except Exception:
+        return {CONFIG_ERROR: format_exc()}
 
 
 @fixture(autouse=True)
