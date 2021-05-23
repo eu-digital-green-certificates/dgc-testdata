@@ -1,12 +1,16 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: DGC Test Data Verification
-on: [workflow_dispatch]
-
+name: DGC Test Data Verification by Country
+on:
+  workflow_dispatch:
+    inputs:
+      cc_code:
+        description: 'Country Code'
+        required: true
+        default: '*'
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -33,7 +37,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Validate DGC Test Data
       run: |
-        pytest --tb=short -rfEx --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junit-xml=pytest.xml
+        pytest -C=${{ github.event.inputs.cc_code }} --tb=short -rfEx --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junit-xml=pytest.xml
     - name: Upload DGC Test Data Validation Results
       uses: actions/upload-artifact@v2
       with:
