@@ -38,3 +38,31 @@ All tests should be successful.
 All tests should be successful.
 
 ![5](png/5.png)
+
+### Laboratory Test (RI)
+
+[7.json](2DCode/raw/7.json) - DGC with RI test entry.
+Should not verify schema - incorrect device identification number.
+
+![7](png/7.png)
+
+### Recovery test
+
+[8.json](2DCode/raw/8.json) - DGC with recovery entry.
+Should not verify schema - incorrect country code.
+
+![8](png/8.png)
+
+### Vaccination test (Second Dose)
+
+[9.json](2DCode/raw/9.json) - DGC with second vaccination entry Dose.
+Should not verify schema - incorrect vaccine manufacturer identifier.
+
+![9](png/9.png)
+
+### Recovery test
+
+[10.json](2DCode/raw/10.json) - DGC with recovery entry.
+Certificate expired.
+
+![10](png/10.png)
