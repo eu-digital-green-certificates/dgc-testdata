@@ -32,16 +32,23 @@ All tests should be successful.
 
 ![4](png/4.png)
 
-### Laboratory Test (RI)
+### Laboratory Test (RAT)
 
-[5.json](2DCode/raw/5.json) - DGC with RI test entry.
+[5.json](2DCode/raw/5.json) - DGC with RAT test entry.
 All tests should be successful.
 
 ![5](png/5.png)
 
-### Laboratory Test (RI)
+### Vaccination test (Second Dose)
 
-[7.json](2DCode/raw/7.json) - DGC with RI test entry.
+[6.json](2DCode/raw/6.json) - DGC with second vaccination entry Dose.
+Vaccination certificate signed with a recovery DSC. TESTCTX.CERTIFICATE includes a vaccination DSC.
+
+![6](png/6.png)
+
+### Laboratory Test (RAT)
+
+[7.json](2DCode/raw/7.json) - DGC with RAT test entry.
 Should not verify schema - incorrect device identification number.
 
 ![7](png/7.png)
