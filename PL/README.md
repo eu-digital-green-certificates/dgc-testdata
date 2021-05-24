@@ -27,14 +27,14 @@ All tests should be successful.
 
 ### Laboratory Test (NAA)
 
-[4.json](2DCode/raw/4.json) - DGC with NAA test entry.
+[4.json](2DCode/raw/4.json) - DGC with NAA test entry - valid until **2021-11-15 20:10:00 GMT+01:00** (for testing purpose).
 All tests should be successful.
 
 ![4](png/4.png)
 
 ### Laboratory Test (RAT)
 
-[5.json](2DCode/raw/5.json) - DGC with RAT test entry.
+[5.json](2DCode/raw/5.json) - DGC with RAT test entry - valid until **2021-11-17 12:20:00 GMT+01:00** (for testing purpose).
 All tests should be successful.
 
 ![5](png/5.png)
