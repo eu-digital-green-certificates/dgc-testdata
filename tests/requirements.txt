@@ -9,5 +9,6 @@ Pillow
 python-dateutil
 pytest-md-report
 pytest-html
+
 ###### Requirements with Version Specifiers ######`
 cose == 0.9.dev7
