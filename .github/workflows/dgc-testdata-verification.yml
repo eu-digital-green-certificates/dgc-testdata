@@ -19,6 +19,12 @@ jobs:
         python-version: [3.9]
 
     steps:
+    - uses: haya14busa/action-cond@v1
+      id: country_code
+      with:
+        cond: ${{ github.event_name == 'pull_request' }}
+        if_true: "*"
+        if_false: "${{ github.event.inputs.country_code }}"
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -38,7 +44,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Validate DGC Test Data
       run: |
-        pytest -C=${{ github.event.inputs.country_code }} --tb=short -rfEx --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junit-xml=pytest.xml
+        pytest -C=${{ steps.country_code.output.value }} --tb=short -rfEx --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junit-xml=pytest.xml
     - name: Upload DGC Test Data Validation Results
       uses: actions/upload-artifact@v2
       with:
