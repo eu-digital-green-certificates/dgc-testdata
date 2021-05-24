@@ -9,6 +9,7 @@ on:
         description: 'Country Code'
         required: true
         default: '*'
+  pull_request:
 jobs:
   build:
     runs-on: ubuntu-latest
