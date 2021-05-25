@@ -1,6 +1,4 @@
 test_name,country,test_set,reason
-test_expected_key_usage,NL,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/146
-test_cose_schema,NL,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/107
 test_expected_key_usage,SI,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/77
 test_expiration_check,SI,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/77
 test_verification_check,SI,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/77
