@@ -97,7 +97,7 @@ COSE = 'COSE'
 JSON = 'JSON'
 TEST_CONTEXT = 'TESTCTX'
 VALIDATION_CLOCK = 'VALIDATIONCLOCK'
-QR_CODE = '2DCODE'
+TWOD_CODE = '2DCODE'
 PREFIX = 'PREFIX'
 BASE45 = 'BASE45'
 CONFIG_ERROR = 'CONFIG_ERROR'
@@ -474,22 +474,26 @@ def test_picture_decode(config_env: Dict):
         fail(f'Config Error: {config_env[CONFIG_ERROR]}')
     if EXPECTED_PICTURE_DECODE not in config_env[EXPECTED_RESULTS].keys():
         skip(f'Test not requested: {EXPECTED_PICTURE_DECODE}')
-    if not ({QR_CODE, PREFIX} <= config_env.keys()):
-        skip(f'Test dataset does not contain {QR_CODE} and/or {PREFIX}')
+    if not ({TWOD_CODE, PREFIX} <= config_env.keys()):
+        skip(f'Test dataset does not contain {TWOD_CODE} and/or {PREFIX}')
 
+    # noinspection PyBroadException
+    try:
+        code_content = _get_code_content(config_env[TWOD_CODE])
+    except Exception:
+        if config_env[EXPECTED_RESULTS][EXPECTED_PICTURE_DECODE]:
+            raise
+        else:
+            return
     if config_env[EXPECTED_RESULTS][EXPECTED_PICTURE_DECODE]:
-        assert (_get_code_content(config_env[QR_CODE]) == config_env[PREFIX])
+        assert (code_content == config_env[PREFIX])
     else:
-        assert not (_get_code_content(config_env[QR_CODE]) == config_env[PREFIX])
+        assert not (code_content == config_env[PREFIX])
 
 
 def _get_code_content(base64_image):
-    # noinspection PyBroadException
-    try:
-        b = b64decode(base64_image)
-        with BytesIO(b) as f:
-            with image_open(f) as image:
-                dec = bar_decode(image)[0]
-        return dec.data.decode()
-    except Exception:
-        return None
+    b = b64decode(base64_image)
+    with BytesIO(b) as f:
+        with image_open(f) as image:
+            dec = bar_decode(image)[0]
+    return dec.data.decode()
