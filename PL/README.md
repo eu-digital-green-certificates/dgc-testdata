@@ -17,3 +17,24 @@ All tests should be successful.
 All tests should be successful.
 
 ![2](png/2.png)
+
+### Recovery test
+
+[3.json](2DCode/raw/3.json) - DGC with recovery entry.
+All tests should be successful.
+
+![3](png/3.png)
+
+### Laboratory Test (NAA)
+
+[4.json](2DCode/raw/4.json) - DGC with NAA test entry.
+All tests should be successful.
+
+![4](png/4.png)
+
+### Laboratory Test (RI)
+
+[5.json](2DCode/raw/5.json) - DGC with RI test entry.
+All tests should be successful.
+
+![5](png/5.png)
