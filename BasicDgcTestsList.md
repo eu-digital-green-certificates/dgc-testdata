@@ -40,6 +40,7 @@ This List contains common Test Cases which should be passed by any DGC Validator
 | CO25 | COSE/CWT  | KID is less than 8 byte                       | INVALID  |  |  
 | CO26 | COSE/CWT  | KID is greater than 8 byte                      | INVALID  |  |  
 | CO27 | COSE/CWT  | Wrong algorithm ID (e.g. RSA with ECDSA signature) MUST lead to invalid.                     | INVALID  |  |  
+| CO28 | COSE/CWT  | Message is double tagged. (CWT Tag and COSE Tag)                     | VALID  | [CO28.json](common/2DCode/raw/CO28.json) |  
 | CBO1 | CBOR      | wrong CBOR structure                                                               | INVALID  | [CBO1.json](common/2DCode/raw/CBO1.json) |                       |
 | CBO2 | CBOR      | wrong CWT structure                                                                | INVALID  | [CBO2.json](common/2DCode/raw/CBO2.json) |                       |
 | DGC1 | DGC       | DGC does not adhere to schema                                                      | INVALID  | [DGC1.json](common/2DCode/raw/DGC1.json) |                       |
