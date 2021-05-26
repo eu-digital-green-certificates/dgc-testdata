@@ -4,7 +4,6 @@
        "EXPECTEDENCODE": true,
        "EXPECTEDDECODE": true,
        "EXPECTEDVERIFY": true,
-       "EXPECTEDKEYUSAGE": true,
        "EXPECTEDUNPREFIX": true,
        "EXPECTEDB45DECODE": true,
        "EXPECTEDPICTUREDECODE": true,
