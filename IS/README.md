@@ -41,3 +41,12 @@ All tests should be successful.
 Public key uploaded in the ACC environment
 
 ![4](2DCode/png/4.png)
+
+### 5
+
+[4.json](2DCode/raw/5.json) -Vaccination signed with RSA, no extened key usage
+
+All tests should be successful.
+Public key uploaded in the ACC environment
+
+![4](2DCode/png/5.png)
