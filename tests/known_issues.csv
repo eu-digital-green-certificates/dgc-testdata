@@ -1,9 +1,6 @@
 test_name,country,test_set,reason
 test_expected_key_usage,NL,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/146
 test_cose_schema,NL,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/107
-test_verification_check,ES,101,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/91
-test_verification_check,ES,102,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/91
-test_verification_check,ES,103,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/91
 test_verification_check,ES,401,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
 test_verification_check,ES,402,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
 test_verification_check,ES,403,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
@@ -14,10 +11,6 @@ test_verification_check,ES,1203,https://github.com/eu-digital-green-certificates
 test_expiration_check,ES,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/169
 test_cose_schema,ES,1203,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
 test_cose_json,ES,1203,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
-test_cose_json,ES,2101,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
-test_cose_json,ES,2102,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
-test_cose_json,ES,2103,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
-test_cose_cbor,ES,102,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
 test_cose_cbor,ES,1203,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/32
 ,BE,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/150
 ,FR,test_pcr_ok,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/141
