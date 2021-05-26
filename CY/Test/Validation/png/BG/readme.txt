@@ -1,0 +1,1 @@
+BG does not provides QRs
