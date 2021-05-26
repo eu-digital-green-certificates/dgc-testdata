@@ -45,7 +45,12 @@ test_cbor_json,PL,5,https://github.com/eu-digital-green-certificates/dgc-testdat
 ,CZ,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
 ,CZ,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
 ,CZ,5,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
-test_cose_schema,NL,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/213 -> test script is stricter than spec
-test_cose_json,NL,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/213 -> test script is stricter than spec
-test_cbor_json,NL,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/213 -> test script is stricter than spec
-test_cose_schema,SI,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
+test_cose_schema,SE,7,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/213 -> test script is stricter than spec
+test_cose_json,SE,7,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/213 -> test script is stricter than spec
+test_cbor_json,SE,7,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/213 -> test script is stricter than spec
+test_cose_schema,SI,1,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
+test_cose_schema,SI,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
+test_cose_schema,SI,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
+test_cose_schema,SI,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
+test_cose_schema,SI,5,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
+test_cose_schema,SI,6,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
