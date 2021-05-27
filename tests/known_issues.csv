@@ -14,9 +14,3 @@ test_cose_schema,NL,,https://github.com/eu-digital-green-certificates/dgc-testda
 ,CZ,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
 ,CZ,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
 ,CZ,5,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/172
-test_cose_schema,SI,1,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
-test_cose_schema,SI,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
-test_cose_schema,SI,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
-test_cose_schema,SI,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
-test_cose_schema,SI,5,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
-test_cose_schema,SI,6,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/220
