@@ -107,7 +107,7 @@ CONFIG_ERROR = 'CONFIG_ERROR'
 @filecache(DAY)
 def _get_hcert_schema():
     print('Loading HCERT schema ...')
-    return load_uri('https://id.uvci.eu/DGC.schema.json')
+    return load_uri('https://raw.githubusercontent.com/eu-digital-green-certificates/ehn-dgc-schema/main/DGC.schema.json')
 
 
 def pytest_generate_tests(metafunc):
