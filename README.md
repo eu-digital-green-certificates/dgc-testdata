@@ -60,7 +60,16 @@ For all variables above:
 - When set to `true`, this validation step should succeed
 - When set to `false`, this validation step should fail
 
-The inline test procedure contains the steps: 
+### Gateway
+
+To indidcate which gateway environment is available, the test data context should contain: **GATEWAY-ENV**:**Array**
+
+Example: 
+
+`GATEWAY-ENV`:["ACC", "TST"]
+
+**Note:** Prod Keys should not be uploaded. 
+
 #### Code Generation
 
 | Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
@@ -126,7 +135,8 @@ The  JSON Content under RAW is defined as:
        "SCHEMA": **string (USED SCHEMA, semver)**,
        "CERTIFICATE": **BASE64** ,
        "VALIDATIONCLOCK": **Timestamp**, (https://docs.jsonata.org/date-time-functions ISO8601)
-       "DESCRIPTION": **string**
+       "DESCRIPTION": **string**,
+       "GATEWAY-ENV":**Array**
    },
    "EXPECTEDRESULTS": {
        "EXPECTEDVALIDOBJECT": **boolean**,
@@ -181,7 +191,8 @@ Example:
         "SCHEMA": "1.0.0",
         "CERTIFICATE": "MIIBWTCCAQCgAwIBAgIFAK7oh64wCgYIKoZIzj0EAwIwEDEOMAwGA1UEAwwFRUMtTWUwHhcNMjEwNTAzMTgwMDAwWhcNMjEwNjAyMTgwMDAwWjAQMQ4wDAYDVQQDDAVFQy1NZTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABIQ5ERHXUAPDk3phCru13jtRzJnVcwXYd8jCm0wAez9TFnJhHkxGEW0pvQB7FQJkqcr3H4FDsxaf6Z5i55nQcWOjRzBFMA4GA1UdDwEB/wQEAwIFoDAzBgNVHSUELDAqBgwrBgEEAQCON49lAQEGDCsGAQQBAI43j2UBAgYMKwYBBAEAjjePZQEDMAoGCCqGSM49BAMCA0cAMEQCIA6il0H0Shfie72mZBX+F1PbQXA88HCkAF1HZKjIQW8VAiBiIdQGkNxs3+vpcAwRqrRyXel6y2e/M2Qgr4PWy2Ms5g==",
         "VALIDATIONCLOCK": "2021-05-03T20:00:00+02:00",
-        "DESCRIPTION": "VALID: EC 256 key"
+        "DESCRIPTION": "VALID: EC 256 key",
+        "GATEWAY-ENV":["ACC"]
     },
     "EXPECTEDRESULTS": {
         "EXPECTEDDECODE": true,

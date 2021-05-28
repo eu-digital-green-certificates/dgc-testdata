@@ -2,11 +2,16 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: DGC Test Data Verification
-on: [workflow_dispatch]
-
+on:
+  workflow_dispatch:
+    inputs:
+      country_code:
+        description: 'Country Code'
+        required: true
+        default: '*'
+  pull_request:
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -31,9 +36,14 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Validate DGC Test Data
+    - name: Validate DGC Test Data Pull Request
+      if: ${{ github.event_name != 'workflow_dispatch' }}
       run: |
         pytest --tb=short -rfEx --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junit-xml=pytest.xml
+    - name: Validate DGC Test Data Workflow Dispatch
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+        pytest -C=${{ github.event.inputs.country_code }} --tb=short -rfEx --md-report --md-report-verbose=1 --md-report-zeros=number --html=dgc_testdata_report.html --self-contained-html --junit-xml=pytest.xml
     - name: Upload DGC Test Data Validation Results
       uses: actions/upload-artifact@v2
       with:
