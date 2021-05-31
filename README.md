@@ -1,5 +1,5 @@
 <h1 align="center">
- Digital Green Certificates: Test Data Repository for Test Automation
+ EU Digital COVID Certificate: Test Data Repository for Test Automation
 </h1>
 
 <p align="center">
