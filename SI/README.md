@@ -2,7 +2,7 @@
 
 ---
 
-This directory contains test files produced by the Slovenian integration team.
+This directory contains test files produced by the Slovenian integration team. The DGCs were signed with a DSC from ACC NB.
 
 ## Test files
 
