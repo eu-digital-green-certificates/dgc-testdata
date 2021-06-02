@@ -4,7 +4,9 @@
 
 ### Vaccination
 
-[1.json](2DCode/raw/1.json): Valid certificate with two vaccination entries.
+
+[1.json](2DCode/raw/1.json): Valid certificate with one vaccination entry.
+
 
 ![1](png/1.png)
 
