@@ -6,9 +6,6 @@ test_cose_schema,NL,,https://github.com/eu-digital-green-certificates/dgc-testda
 ,PT,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/151
 ,PT,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/151
 ,PT,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/151
-,DE,1,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/119
-,DE,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/119
-,DE,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/119
 test_expiration_check,ES,1101,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/169
 test_expiration_check,ES,1102,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/169
 test_expiration_check,ES,1103,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/169

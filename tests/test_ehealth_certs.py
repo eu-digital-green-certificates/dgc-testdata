@@ -277,7 +277,10 @@ def test_cose_schema(config_env: Dict):
         assert 1 in cose_payload[PAYLOAD_HCERT].keys()
         hcert = cose_payload[PAYLOAD_HCERT][1]
         schema_validate(hcert, _get_hcert_schema())
-        assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1, 'DGC adheres to schema but contains multiple certificates'
+        # assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1,
+        # 'DGC adheres to schema but contains multiple certificates'
+        assert len([key for key in hcert.keys() if key in ['v', 'r', 't']]) == 1, \
+            'DGC adheres to schema but contains multiple certificates'
 
 
 def test_cose_json(config_env: Dict):
@@ -428,8 +431,10 @@ def test_expected_key_usage(config_env: Dict):
     assert len(cose_payload[PAYLOAD_HCERT]) == 1
     assert 1 in cose_payload[PAYLOAD_HCERT].keys()
     hcert = cose_payload[PAYLOAD_HCERT][1]
-    assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1, \
-        'DGC adheres to schema but contains multiple certificates of different types'
+    assert len([key for key in hcert.keys() if key in ['v', 'r', 't']]) == 1, \
+        'DGC adheres to schema but contains multiple certificates'
+    # assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1, \
+    #     'DGC adheres to schema but contains multiple certificates of different types'
     hcert_type = (set(hcert.keys()) & {'v', 'r', 't'}).pop()
 
     if config_env[EXPECTED_RESULTS][EXPECTED_KEY_USAGE] and dsc_supported_operations:

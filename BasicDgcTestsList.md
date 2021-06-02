@@ -61,3 +61,4 @@ This List contains common Test Cases which should be passed by any DGC Validator
 |I-CO2 | COSE/CWT  | The kid field MUST contain a 8-byte value                       | |
 |I-CO3 | COSE/CWT  | Used EC certificates MUST use prime256v1                    | |
 |I-CO4 | COSE/CWT  | Issuing Date and Expiration Date MUST be INT Values (Seconds since epoch)                  | |
+|I-CO5 | COSE/CWT  | CBOR Object contains no undefined Values                 | |
