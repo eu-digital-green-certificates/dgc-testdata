@@ -4,20 +4,20 @@
 
 ### Vaccination
 
-[INCERT_R DCC Vaccination.json](INCERT_R DCC Vaccination.json): One vaccination entry.
+[INCERT_R_DCC_Vaccination.json](INCERT_R_DCC_Vaccination.json): One vaccination entry.
 
-![1](png/INCERT_R DCC Vaccination.png)
+![1](png/INCERT_R_DCC_Vaccination.png)
 
-[INCERT_R DCC NAAT.json](INCERT_R DCC NAAT.json):  One NAA test entry.
+[INCERT_R_DCC_NAAT.json](INCERT_R_DCC_NAAT.json):  One NAA test entry.
 
-![2](png/INCERT_R DCC NAAT.png)
+![2](png/INCERT_R_DCC_NAAT.png)
 
-[INCERT_R DCC RAT.json](INCERT_R DCC RAT.json): One RAT test entry.
+[INCERT_R_DCC_RAT.json](INCERT_R_DCC_RAT.json): One RAT test entry.
 
-![3](png/INCERT_R DCC RAT.png)
+![3](png/INCERT_R_DCC_RAT.png)
 
-[INCERT_R DCC Recovery.json](INCERT_R DCC Recovery.json): One recovery entry.
+[INCERT_R_DCC_Recovery.json](INCERT_R_DCC_Recovery.json): One recovery entry.
 
-![4](png/INCERT_R DCC Recovery.png)
+![4](png/INCERT_R_DCC_Recovery.png)
 
 
