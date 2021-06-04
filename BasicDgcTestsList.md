@@ -1,3 +1,4 @@
+# Verifier Validity Checks
 
 This List contains common Test Cases which should be passed by any DGC Validators. 
 
@@ -14,7 +15,7 @@ This List contains common Test Cases which should be passed by any DGC Validator
 | Z2   | ZLIB      | Not compressed                                                                     | INVALID  | [Z2.json](common/2DCode/raw/Z2.json)     |                       |
 | CO1  | COSE/CWT  | Algorithm PS256 with RSA 2048                                                      | VALID    | [CO1.json](common/2DCode/raw/CO1.json)   |                       |
 | CO2  | COSE/CWT  | Algorithm PS256 with RSA 3072                                                      | VALID    | [CO2.json](common/2DCode/raw/CO2.json)   |                       |
-| CO3  | COSE/CWT  | Algorithm PS256 with ES256                                                         | VALID    | [CO3.json](common/2DCode/raw/CO3.json)   |                       |
+| CO3  | COSE/CWT  | Algorithm ES256                                                                    | VALID    | [CO3.json](common/2DCode/raw/CO3.json)   |                       |
 | CO4  | COSE/CWT  | Algorithm not supported (other then ES256/PS256)                                   | INVALID  |                                          |                       |
 | CO5  | COSE/CWT  | Signature cryptographically invalid                                                | INVALID  | [CO5.json](common/2DCode/raw/CO5.json)   |                       |
 | CO6  | COSE/CWT  | OID for Test present, but DGC for vacc                                             | INVALID  | [CO6.json](common/2DCode/raw/CO6.json)   |                       |
@@ -36,6 +37,10 @@ This List contains common Test Cases which should be passed by any DGC Validator
 | CO22 | COSE/CWT  | KID in protected header **not correct**, KID in unprotected header **correct**     | INVALID  | [CO22.json](common/2DCode/raw/CO22.json) |                       |
 | CO23 | COSE/CWT  | KID in protected header **not present**, KID in unprotected header **not correct** | INVALID  | [CO23.json](common/2DCode/raw/CO23.json) |                       |
 | CO24 | COSE/CWT  | A wrong generated ECDSA Signature (longer than 70 bytes) should not lead to an crash                       | INVALID  |  |  
+| CO25 | COSE/CWT  | KID is less than 8 byte                       | INVALID  |  |  
+| CO26 | COSE/CWT  | KID is greater than 8 byte                      | INVALID  |  |  
+| CO27 | COSE/CWT  | Wrong algorithm ID (e.g. RSA with ECDSA signature) MUST lead to invalid.                     | INVALID  |  |  
+| CO28 | COSE/CWT  | Message is double tagged. (CWT Tag and COSE Tag)                     | VALID  | [CO28.json](common/2DCode/raw/CO28.json) |  
 | CBO1 | CBOR      | wrong CBOR structure                                                               | INVALID  | [CBO1.json](common/2DCode/raw/CBO1.json) |                       |
 | CBO2 | CBOR      | wrong CWT structure                                                                | INVALID  | [CBO2.json](common/2DCode/raw/CBO2.json) |                       |
 | DGC1 | DGC       | DGC does not adhere to schema                                                      | INVALID  | [DGC1.json](common/2DCode/raw/DGC1.json) |                       |
@@ -46,3 +51,14 @@ This List contains common Test Cases which should be passed by any DGC Validator
 | DGC6 | DGC       | correct vacc DGC                                                                   | VALID    | [DGC6.json](common/2DCode/raw/DGC6.json) |                       |
 | DGC7 | DGC       | Correct result for Test Result "260373001" (detected")                             | INVALID  |  | https://github.com/eu-digital-green-certificates/dgca-app-core-ios/blob/main/Sources/Models/TestEntry.swift#L68
 |DGC8  | DGC       | The verifier app must show a correct result for future sample timestamps           | INVALID || https://github.com/eu-digital-green-certificates/dgca-app-core-ios/blob/main/Sources/Models/TestEntry.swift#L68
+
+
+# Issuer Quality Checks
+
+| ID   | Component | Business Description                                        | Testdataset    | Known Implementations |
+|------|-----------|-------------------------------------------------------------|--------------|------------------------|
+|I-CO1 | COSE/CWT  | The CWT iss field MUST contain an valid ISO 3166-1 alpha-2  |              | |
+|I-CO2 | COSE/CWT  | The kid field MUST contain a 8-byte value                       | |
+|I-CO3 | COSE/CWT  | Used EC certificates MUST use prime256v1                    | |
+|I-CO4 | COSE/CWT  | Issuing Date and Expiration Date MUST be INT Values (Seconds since epoch)                  | |
+|I-CO5 | COSE/CWT  | CBOR Object contains no undefined Values                 | |

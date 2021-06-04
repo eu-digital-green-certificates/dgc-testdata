@@ -12,6 +12,7 @@ The software used to produce the QR-codes can be found at https://github.com/ehn
 [1.json](2DCode/raw/1.json) - Basic DGC with one vaccination entry. 
 
 All tests should be successful.
+Public key uploaded in the test environment
 
 ![1](2DCode/png/1.png)
 
@@ -20,5 +21,32 @@ All tests should be successful.
 [2.json](2DCode/raw/2.json) - Basic DGC with one test entry. 
 
 All tests should be successful.
+Public key uploaded in the test environment
 
 ![2](2DCode/png/2.png)
+
+### 3
+
+[3.json](2DCode/raw/3.json) -Negative PCR signed with RSA, no extened key usage
+
+All tests should be successful.
+
+![3](2DCode/png/3.png)
+
+### 4
+
+[4.json](2DCode/raw/4.json) -Negative PCR signed with RSA, no extened key usage
+
+All tests should be successful.
+Public key uploaded in the ACC environment
+
+![4](2DCode/png/4.png)
+
+### 5
+
+[5.json](2DCode/raw/5.json) -Vaccination signed with RSA, no extened key usage
+
+All tests should be successful.
+Public key uploaded in the ACC environment
+
+![5](2DCode/png/5.png)
