@@ -1,0 +1,1 @@
+ES does not provides QRs

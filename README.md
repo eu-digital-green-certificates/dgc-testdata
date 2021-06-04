@@ -1,6 +1,23 @@
-# DGC Test Data Repository for Test Automation
+<h1 align="center">
+ EU Digital COVID Certificate: Test Data Repository for Test Automation
+</h1>
+
+<p align="center">
+    <a href="#about">About</a> •
+    <a href="#testing--status">Testing & Status</a> •
+    <a href="#2d-code">2D Code</a> •
+    <a href="#how-to-contribute">How to Contribute</a> •
+    <a href="#licensing">Licensing</a>
+</p>
+
+## About
 
 To automate the generation and validation tests of COSE/CBOR Codes and it's base45/2D Code representations, a lot of data has to be collected to ensure the variance of the tests. This respository was established to collect a lot of different test data and related test cases of different member states in a standardized manner. Each member state can generate a folder in this section. 
+
+## Testing & Status
+
+- If you found any problems, please create an [Issue](/../../issues).
+- Please make sure to review the issues to see if any other members states found issues with your provided test data. 
 
 ## 2D Code
 
@@ -43,7 +60,16 @@ For all variables above:
 - When set to `true`, this validation step should succeed
 - When set to `false`, this validation step should fail
 
-The inline test procedure contains the steps: 
+### Gateway
+
+To indidcate which gateway environment is available, the test data context should contain: **GATEWAY-ENV**:**Array**
+
+Example: 
+
+`GATEWAY-ENV`:["ACC", "TST"]
+
+**Note:** Prod Keys should not be uploaded. 
+
 #### Code Generation
 
 | Test Number | Test| Mandatory Fields|Mandatory Test Context Fields| Variable|
@@ -67,6 +93,7 @@ The inline test procedure contains the steps:
 | 6           | Extract the CBOR content and validate the CBOR content against the RAW CBOR content field. See note 2 below. | COSE,CBOR        |                               | EXPECTEDDECODE           |
 | 7           | Transform CBOR into JSON and validate against the RAW JSON content. See note 3 below.                        | CBOR,JSON        |                               | EXPECTEDVALIDJSON        |
 | 8           | Validate the extracted JSON against the schema defined in the test context.                                  | CBOR,JSON        | SCHEMA                        | EXPECTEDSCHEMAVALIDATION |
+| 9           | The value given in COMPRESSED has to be decompressed by zlib and must match to the value given in COSE| COSE,COMPRESSED||EXPECTEDCOMPRESSION|
 
 **NOTE**: DESCRIPTION, VERSION are mandatory for all tests.
 
@@ -108,7 +135,8 @@ The  JSON Content under RAW is defined as:
        "SCHEMA": **string (USED SCHEMA, semver)**,
        "CERTIFICATE": **BASE64** ,
        "VALIDATIONCLOCK": **Timestamp**, (https://docs.jsonata.org/date-time-functions ISO8601)
-       "DESCRIPTION": **string**
+       "DESCRIPTION": **string**,
+       "GATEWAY-ENV":**Array**
    },
    "EXPECTEDRESULTS": {
        "EXPECTEDVALIDOBJECT": **boolean**,
@@ -163,7 +191,8 @@ Example:
         "SCHEMA": "1.0.0",
         "CERTIFICATE": "MIIBWTCCAQCgAwIBAgIFAK7oh64wCgYIKoZIzj0EAwIwEDEOMAwGA1UEAwwFRUMtTWUwHhcNMjEwNTAzMTgwMDAwWhcNMjEwNjAyMTgwMDAwWjAQMQ4wDAYDVQQDDAVFQy1NZTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABIQ5ERHXUAPDk3phCru13jtRzJnVcwXYd8jCm0wAez9TFnJhHkxGEW0pvQB7FQJkqcr3H4FDsxaf6Z5i55nQcWOjRzBFMA4GA1UdDwEB/wQEAwIFoDAzBgNVHSUELDAqBgwrBgEEAQCON49lAQEGDCsGAQQBAI43j2UBAgYMKwYBBAEAjjePZQEDMAoGCCqGSM49BAMCA0cAMEQCIA6il0H0Shfie72mZBX+F1PbQXA88HCkAF1HZKjIQW8VAiBiIdQGkNxs3+vpcAwRqrRyXel6y2e/M2Qgr4PWy2Ms5g==",
         "VALIDATIONCLOCK": "2021-05-03T20:00:00+02:00",
-        "DESCRIPTION": "VALID: EC 256 key"
+        "DESCRIPTION": "VALID: EC 256 key",
+        "GATEWAY-ENV":["ACC"]
     },
     "EXPECTEDRESULTS": {
         "EXPECTEDDECODE": true,
@@ -192,3 +221,20 @@ Contains images of the generated base45 contents(PNG).
 ### Certificate Content
 
 The public key to validate the data structure. This is defined as base64 encoded datastructure (PEM).
+
+## How to contribute  
+
+Contribution and feedback is encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](./CONTRIBUTING.md). By participating in this project, you agree to abide by its [Code of Conduct](./CODE_OF_CONDUCT.md) at all times.
+
+
+## Licensing
+
+Copyright (C) 2021 T-Systems International GmbH and all other contributors
+
+Licensed under the **Apache License, Version 2.0** (the "License"); you may not use this file except in compliance with the License.
+
+You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0.
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" 
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](./LICENSE) for the specific 
+language governing permissions and limitations under the License.
