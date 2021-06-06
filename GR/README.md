@@ -6,7 +6,7 @@ This directory contains test files produced by the Greek Ministry of Health.
 
 ## Test files
 
-- [1.json](2DCode/raw/1.json) - Basic DGC with completed vaccination entry.
+- [1.json](2DCode/raw/1.json) - Basic DGC with 2/2 vaccination entry.
 - [3.json](2DCode/raw/2.json) - Basic DGC for recovery.
 - [4.json](2DCode/raw/3.json) - Basic DGC for test.
 
