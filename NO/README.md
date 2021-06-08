@@ -1,6 +1,6 @@
 # Norway
 
-This directory contains test files produced by the The Norwegian Directorate for eHealth 
+This directory contains test files produced by the Norwegian Health Network (NHN)
 
 ## Test files
 
