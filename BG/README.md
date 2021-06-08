@@ -6,6 +6,18 @@ This directory contains test files produced by the Bulgarian Ministry of Health.
 
 ## Test files
 
-- [1.json](2DCode/raw/1.json) - Basic DGC with two vaccination entry. All tests should be successful.
+- [Vaccinated DGC](2DCode/raw/1.json) - old version with wrong format of Date Of Birth and null values for "t" and "r" objects.
 
-> More tests will be added as soon.
+![Vaccinated - old](png/BG-1.png)
+
+- [Recovered DGC](2DCode/raw/2.json) - old version with wrong format of Date Of Birth and null values for "t" and "v" objects.
+
+![Recovered - old](png/BG-2.png)
+
+- [Vaccinated DGC](2DCode/raw/3.json) - schema errors fixed
+
+![Vaccinated](png/BG-3.png)
+
+- [Recovered DGC](2DCode/raw/4.json) - schema errors fixed
+
+![Recovered](png/BG-4.png)
