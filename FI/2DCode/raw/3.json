@@ -33,7 +33,8 @@
         "VALIDATIONCLOCK": "2022-06-11T23:59:59+03:00",
         "DESCRIPTION": "VALID NAAT ENTRY ",
         "GATEWAY-ENV": [
-            "ACC"
+            "ACC",
+            "TST"
         ]
     },
     "EXPECTEDRESULTS": {
