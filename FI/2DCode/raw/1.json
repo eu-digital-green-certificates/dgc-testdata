@@ -35,7 +35,8 @@
         "VALIDATIONCLOCK": "2022-06-11T23:59:59+03:00",
         "DESCRIPTION": "VALID VACCINATION CERTIFICATE WITH 1/1 VACCINATIONS: EC-DSA 256",
         "GATEWAY-ENV": [
-            "ACC"
+            "ACC",
+            "TST"
         ]
     },
     "EXPECTEDRESULTS": {
