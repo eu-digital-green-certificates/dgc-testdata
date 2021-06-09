@@ -34,9 +34,9 @@
         "SCHEMA": "1.0.0",
         "VALIDATIONCLOCK": "2022-06-11T23:59:59+03:00",
         "DESCRIPTION": "VALID VACCINATION CERTIFICATE WITH 2/2 VACCINATIONS: EC-DSA 256",
-        "DESCRIPTION": " ",
+        "GATEWAY-ENV": [
             "ACC",
-            "TST
+            "TST"
         ]
     },
     "EXPECTEDRESULTS": {
