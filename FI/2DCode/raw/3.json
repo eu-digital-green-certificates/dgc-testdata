@@ -47,7 +47,6 @@
         "EXPECTEDCOMPRESSION": true,
         "EXPECTEDB45DECODE": true,
         "EXPECTEDPICTUREDECODE": true,
-        "EXPECTEDEXPIRATIONCHECK": true,
-        "EXPECTEDKEYUSAGE": false
+        "EXPECTEDEXPIRATIONCHECK": true
     }
 }
