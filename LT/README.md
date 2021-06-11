@@ -19,6 +19,6 @@
 
 ### Recovery
 
-[3.json](3DCode/raw/3.json): Valid certificate with recovery entry.
+[3.json](2DCode/raw/3.json): Valid certificate with recovery entry.
 
 ![3](png/3.png)
