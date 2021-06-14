@@ -4,8 +4,7 @@
 
 This directory contains test files produced by the FRANCE eHealth Agency.  
 add 18 vaccine DCC test files from France Health Organization (CNAM) DGC_DL_QrCode_000xx
-add 8 DCC test files from France Health Organization (APHP) DCC_Test_000x
-
+add 16 DCC test files from France Health Organization (APHP) DCC_Test_00xx
 
 ## Test files
 
@@ -38,7 +37,14 @@ add 8 DCC test files from France Health Organization (APHP) DCC_Test_000x
 ![DCC_Test_0006.png](png/DCC_Test_0006.png)  
 ![DCC_Test_0007.png](png/DCC_Test_0007.png)  
 ![DCC_Test_0008.png](png/DCC_Test_0008.png)  
-
+![DCC_Test_0010.png](png/DCC_Test_0010.png)  
+![DCC_Test_0011.png](png/DCC_Test_0011.png)  
+![DCC_Test_0012.png](png/DCC_Test_0012.png)  
+![DCC_Test_0013.png](png/DCC_Test_0013.png)  
+![DCC_Test_0014.png](png/DCC_Test_0014.png)  
+![DCC_Test_0015.png](png/DCC_Test_0015.png)  
+![DCC_Test_0016.png](png/DCC_Test_0016.png)  
+![DCC_Test_0017.png](png/DCC_Test_0017.png)  
 
 ### Test PCR OK
 
