@@ -73,3 +73,24 @@ Should not verify schema - incorrect vaccine manufacturer identifier.
 Certificate expired.
 
 ![10](png/10.png)
+
+### Vaccination test (First Dose)
+
+[11.json](2DCode/raw/11.json) - DGC with first vaccination entry Dose - date of vaccination with time. 
+All tests should be successful.
+
+![11](png/11.png)
+
+### Vaccination test (Second Dose)
+
+[12.json](2DCode/raw/12.json) - DGC with second vaccination entry Dose - date of vaccination with time.
+All tests should be successful.
+
+![12](png/12.png)
+
+### Vaccination test (One Dose)
+
+[13.json](2DCode/raw/13.json) - DGC with one vaccination entry Dose - date of vaccination with time.
+All tests should be successful.
+
+![13](png/13.png)
