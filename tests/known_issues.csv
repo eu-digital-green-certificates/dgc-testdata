@@ -10,3 +10,7 @@ test_verification_check,ES,402,https://github.com/eu-digital-green-certificates/
 test_verification_check,ES,403,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/228
 test_cose_schema,BG,1,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/298
 test_cose_schema,BG,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/298
+test_cose_schema,LI,4,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/339
+test_cose_schema,HU,3,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/340
+test_cose_json,LT,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/341
+test_cbor_json,LT,2,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/341
