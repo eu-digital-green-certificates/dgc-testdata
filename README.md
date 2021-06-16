@@ -12,24 +12,24 @@
 
 ## About
 
-To automate the generation and validation tests of COSE/CBOR Codes and it's base45/2D Code representations, a lot of data has to be collected to ensure the variance of the tests. This respository was established to collect a lot of different test data and related test cases of different member states in a standardized manner. Each member state can generate a folder in this section. 
+To automate the generation and validation tests of COSE/CBOR Codes and its base45/2D Code representations, a lot of data has to be collected to ensure the variance of the tests. This repository was established to collect a lot of different test data and related test cases of different member states in a standardized manner. Each member state can generate a folder in this section.
 
 ## Testing & Status
 
 - If you found any problems, please create an [Issue](/../../issues).
-- Please make sure to review the issues to see if any other members states found issues with your provided test data. 
+- Please make sure to review the issues to see if any other members states found issues with your provided test data.
 
 ## 2D Code
 
 ### Test Procedure
 
-The test procedure has the following steps: 
+The test procedure has the following steps:
 
 1. Load RAW Data File X
-2. Apply all test and validation rules to File X (from all countries). 
-3. If one rule fails, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status. 
+2. Apply all test and validation rules to File X (from all countries).
+3. If one rule fails, the RAW Data File X is highlighted with the related Validation Rule/TestName Fail Status.
 
-**Note**: If some of the "EXPTECEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expireing" test is constructed, the "EXPECTEDEXPIRATIONCHECK" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
+**Note**: If some of the "EXPECTEDRESULT" values are not present, the steps in the tests run can be skipped. The related data can be removed then as well. E.g. if just a "Expiring" test is constructed, the "EXPECTEDEXPIRATIONCHECK" value can be set together with an "COSE" and "VALIDATIONCLOCK" raw object. All other fields are then not necessary.
 
 | Field           | Definition                                                 |
 |-----------------|------------------------------------------------------------|
@@ -64,11 +64,11 @@ For all variables above:
 
 To indidcate which gateway environment is available, the test data context should contain: **GATEWAY-ENV**:**Array**
 
-Example: 
+Example:
 
 `GATEWAY-ENV`:["ACC", "TST"]
 
-**Note:** Prod Keys should not be uploaded. 
+**Note:** Prod Keys should not be uploaded.
 
 #### Code Generation
 
@@ -99,7 +99,7 @@ Example:
 
 **NOTE 2**: CBOR objects that are maps (i.e., the Digital Green Certificate), have an undefined order. This means that the actual encodings between two objects containing the same elements may differ since the ordering may be different. Therefore the validation can not be as simple as comparing two byte arrays against each other. The best method is to decode both elements that are to be compared with the same decoder, encode both objects with the same encoder, and then compare.
 
-**NOTE 3**: As CBOR objects, JSON objects are not ordered, and a plain string comparison of two objects can not be performed. 
+**NOTE 3**: As CBOR objects, JSON objects are not ordered, and a plain string comparison of two objects can not be performed.
 
 ### File Structure
 /schema/**[semver]**.json <br>
@@ -108,7 +108,7 @@ Example:
 
 ### Variables
 
-COUNTRY is defined as the country code by ISO 3166. 
+COUNTRY is defined as the country code by ISO 3166.
 
 Number must be a unique number by country/type.
 
@@ -120,7 +120,7 @@ A number which identifies the used schema (used in the RAW Data).
 
 
 
-The  JSON Content under RAW is defined as: 
+The JSON Content under RAW is defined as:
 ```
 {
    "JSON": **JSON OBJECT**,
@@ -153,8 +153,8 @@ The  JSON Content under RAW is defined as:
        "EXPECTEDEXPIRATIONCHECK": **boolean**,
     }
 }
- ```     
-Example: 
+ ```
+Example:
 ```
 {
     "JSON": {
@@ -216,13 +216,13 @@ function [name] ([Decoded JSON Object]) {
 
 ### Image Content
 
-Contains images of the generated base45 contents(PNG). 
+Contains images of the generated base45 contents(PNG).
 
 ### Certificate Content
 
 The public key to validate the data structure. This is defined as base64 encoded datastructure (PEM).
 
-## How to contribute  
+## How to contribute
 
 Contribution and feedback is encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](./CONTRIBUTING.md). By participating in this project, you agree to abide by its [Code of Conduct](./CODE_OF_CONDUCT.md) at all times.
 
@@ -235,6 +235,6 @@ Licensed under the **Apache License, Version 2.0** (the "License"); you may not 
 
 You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0.
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" 
-BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](./LICENSE) for the specific 
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](./LICENSE) for the specific
 language governing permissions and limitations under the License.
