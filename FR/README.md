@@ -45,6 +45,7 @@ add 16 DCC test files from France Health Organization (APHP) DCC_Test_00xx
 ![DCC_Test_0015.png](png/DCC_Test_0015.png)  
 ![DCC_Test_0016.png](png/DCC_Test_0016.png)  
 ![DCC_Test_0017.png](png/DCC_Test_0017.png)  
+![DCC_Vac_00001.png](png/DCC_Vac_00001.png)  
 
 ### Test PCR OK
 
