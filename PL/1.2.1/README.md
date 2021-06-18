@@ -94,3 +94,10 @@ All tests should be successful.
 All tests should be successful.
 
 ![13](png/13.png)
+
+### Vaccination test (One Dose)
+
+[14.json](2DCode/raw/14.json) - DGC with one vaccination entry Dose.
+All tests should be successful.
+
+![14](png/14.png)
