@@ -9,7 +9,7 @@ The software used to produce the QR codes can be found at https://github.com/adm
 
 ### 1 - Vaccination
 
-[1.json](2DCode/raw/1.json) - Basic DGC with one vaccination entry (created with release 1.1).
+[1.json](2DCode/raw/1.json) - Basic DGC with one vaccination entry (created with release 1.2).
 
 All tests should be successful.
 
@@ -19,7 +19,7 @@ All tests should be successful.
 
 ### 2 - Test
 
-[2.json](2DCode/raw/2.json) - Basic DGC with one test entry (created with release 1.1).
+[2.json](2DCode/raw/2.json) - Basic DGC with one test entry (created with release 1.2).
 
 All tests should be successful.
 
@@ -29,7 +29,7 @@ All tests should be successful.
 
 ### 3 - Recovery
 
-[3.json](2DCode/raw/3.json) - Basic DGC with one test entry (created with release 1.1).
+[3.json](2DCode/raw/3.json) - Basic DGC with one test entry (created with release 1.2).
 
 All tests should be successful.
 
@@ -39,7 +39,7 @@ All tests should be successful.
 
 ### 4 - Vaccination
 
-[4.json](2DCode/raw/4.json) - Basic DGC with one vaccination entry (created with release 1.0). 
+[4.json](2DCode/raw/4.json) - Basic DGC with one vaccination entry (created with release 1.1).
 
 All tests should be successful.
 
@@ -49,7 +49,7 @@ All tests should be successful.
 
 ### 5 - Test
 
-[5.json](2DCode/raw/5.json) - Basic DGC with one test entry (created with release 1.0). 
+[5.json](2DCode/raw/5.json) - Basic DGC with one test entry (created with release 1.1).
 
 All tests should be successful.
 
@@ -59,7 +59,7 @@ All tests should be successful.
 
 ### 6 - Recovery
 
-[6.json](2DCode/raw/6.json) - Basic DGC with one test entry (created with release 1.0).
+[6.json](2DCode/raw/6.json) - Basic DGC with one test entry (created with release 1.1).
 
 All tests should be successful.
 
@@ -69,7 +69,7 @@ All tests should be successful.
 
 ### 7 - Vaccination
 
-[7.json](2DCode/raw/7.json) - Basic DGC with one vaccination entry (created with release 1.0). Optional claim "iss" has been changed to "CH".
+[7.json](2DCode/raw/7.json) - Basic DGC with one vaccination entry (created with release 1.0). 
 
 All tests should be successful.
 
@@ -79,7 +79,7 @@ All tests should be successful.
 
 ### 8 - Test
 
-[8.json](2DCode/raw/8.json) - Basic DGC with one test entry (created with release 1.0). Optional claim "iss" has been changed to "CH".
+[8.json](2DCode/raw/8.json) - Basic DGC with one test entry (created with release 1.0). 
 
 All tests should be successful.
 
@@ -89,10 +89,40 @@ All tests should be successful.
 
 ### 9 - Recovery
 
-[9.json](2DCode/raw/9.json) - Basic DGC with one test entry (created with release 1.0). Optional claim "iss" has been changed to "CH".
+[9.json](2DCode/raw/9.json) - Basic DGC with one test entry (created with release 1.0).
 
 All tests should be successful.
 
 [9.png](png/9.png)
 
 ![9](png/9.png)
+
+### 10 - Vaccination
+
+[10.json](2DCode/raw/10.json) - Basic DGC with one vaccination entry (created with release 1.0). Optional claim "iss" has been changed to "CH".
+
+All tests should be successful.
+
+[10.png](png/10.png)
+
+![10](png/10.png)
+
+### 11 - Test
+
+[11.json](2DCode/raw/11.json) - Basic DGC with one test entry (created with release 1.0). Optional claim "iss" has been changed to "CH".
+
+All tests should be successful.
+
+[11.png](png/11.png)
+
+![11](png/11.png)
+
+### 12 - Recovery
+
+[12.json](2DCode/raw/12.json) - Basic DGC with one test entry (created with release 1.0). Optional claim "iss" has been changed to "CH".
+
+All tests should be successful.
+
+[12.png](png/12.png)
+
+![12](png/12.png)
