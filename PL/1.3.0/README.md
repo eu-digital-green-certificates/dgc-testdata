@@ -1,6 +1,6 @@
 # Poland
 
-This directory contains test files produced by the Poland National eHealth Authority (eHealth Center) - **1.0.0** schema.
+This directory contains test files produced by the Poland National eHealth Authority (eHealth Center) - **1.3.0** schema.
 
 ## Test files
 
@@ -27,14 +27,14 @@ All tests should be successful.
 
 ### Laboratory Test (NAA)
 
-[4.json](2DCode/raw/4.json) - DGC with NAA test entry - valid until **2021-11-20 20:10:00 GMT+01:00**.
+[4.json](2DCode/raw/4.json) - DGC with NAA test entry - valid until **2023-05-24 13:18:47 GMT+02:00**.
 All tests should be successful.
 
 ![4](png/4.png)
 
 ### Laboratory Test (RAT)
 
-[5.json](2DCode/raw/5.json) - DGC with RAT test entry - valid until **2021-11-20 12:20:00 GMT+01:00**.
+[5.json](2DCode/raw/5.json) - DGC with RAT test entry - valid until **2023-05-24 13:18:47 GMT+02:00**.
 All tests should be successful.
 
 ![5](png/5.png)
@@ -76,7 +76,7 @@ Certificate expired.
 
 ### Vaccination test (First Dose)
 
-[11.json](2DCode/raw/11.json) - DGC with first vaccination entry Dose - date of vaccination with time. 
+[11.json](2DCode/raw/11.json) - DGC with first vaccination entry Dose - date of vaccination with time.
 All tests should be successful.
 
 ![11](png/11.png)
