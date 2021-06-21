@@ -90,6 +90,7 @@ EXPECTED_SCHEMA_VALIDATION = 'EXPECTEDSCHEMAVALIDATION'
 EXPECTED_COMPRESSION = 'EXPECTEDCOMPRESSION'
 EXPECTED_KEY_USAGE = 'EXPECTEDKEYUSAGE'
 TIMESTAMP_ISO8601_EXTENDED = "%Y-%m-%dT%H:%M:%S.%fZ"
+TIMESTAMP_ISO8601 = "%Y-%m-%dT%H:%M:%SZ"
 
 CBOR = 'CBOR'
 CERTIFICATE = 'CERTIFICATE'
@@ -160,15 +161,22 @@ def xfail_known_issues(request, known_issue: str):
         request.applymarker(mark.xfail(reason=known_issue))
 
 
-def _object_hook(decoder, value):
+# noinspection PyUnusedLocal
+def _object_hook_e(decoder, value):
     return {k: v.astimezone(timezone.utc).strftime(TIMESTAMP_ISO8601_EXTENDED) if isinstance(v, (date, datetime)) else v
+            for k, v in value.items()}
+
+
+# noinspection PyUnusedLocal
+def _object_hook(decoder, value):
+    return {k: v.astimezone(timezone.utc).strftime(TIMESTAMP_ISO8601) if isinstance(v, (date, datetime)) else v
             for k, v in value.items()}
 
 
 def _dgc(config_env: Dict) -> Sign1Message:
     if COSE in config_env.keys():
         cbor_bytes = unhexlify(config_env[COSE])
-        cbor_object = loads(cbor_bytes, object_hook=_object_hook)
+        cbor_object = loads(cbor_bytes, object_hook=_object_hook_e)
         if isinstance(cbor_object, CBORTag):  # Tagged Cose Object
             if isinstance(cbor_object.value, CBORTag):  # Double Tagged Cose Object
                 decoded = Sign1Message.from_cose_obj(cbor_object.value.value)
@@ -271,7 +279,7 @@ def test_cose_schema(config_env: Dict):
 
     if config_env[EXPECTED_RESULTS][EXPECTED_SCHEMA_VALIDATION]:
         dgc = _dgc(config_env)
-        cose_payload = loads(dgc.payload, object_hook=_object_hook)
+        cose_payload = loads(dgc.payload, object_hook=_object_hook_e)
         assert PAYLOAD_HCERT in cose_payload.keys()
         assert len(cose_payload[PAYLOAD_HCERT]) == 1
         assert 1 in cose_payload[PAYLOAD_HCERT].keys()
@@ -291,15 +299,16 @@ def test_cose_json(config_env: Dict):
     if not ({COSE, JSON} <= config_env.keys()):
         skip(f'Test dataset does not contain {COSE} and/or {JSON}')
     dgc = _dgc(config_env)
+    cose_payload_e = loads(dgc.payload, object_hook=_object_hook_e)
     cose_payload = loads(dgc.payload, object_hook=_object_hook)
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
         assert PAYLOAD_HCERT in cose_payload.keys()
         assert len(cose_payload[PAYLOAD_HCERT]) == 1
         assert 1 in cose_payload[PAYLOAD_HCERT].keys()
         hcert = cose_payload[PAYLOAD_HCERT][1]
-        assert _ordered(hcert) == _ordered(config_env[JSON])
-    else:
-        assert not _ordered(cose_payload) == _ordered(config_env[JSON])
+        hcert_e = cose_payload_e[PAYLOAD_HCERT][1]
+        assert any([_ordered(hcert) == _ordered(config_env[JSON]),
+                    _ordered(hcert_e) == _ordered(config_env[JSON])])
 
 
 def test_cbor_json(config_env: Dict):
@@ -310,15 +319,17 @@ def test_cbor_json(config_env: Dict):
     if not ({CBOR, JSON} <= config_env.keys()):
         skip(f'Test dataset does not contain {CBOR} and/or {JSON}')
     cbor_bytes = unhexlify(config_env[CBOR])
-    cbor_object = loads(cbor_bytes)
+    cbor_object_e = loads(cbor_bytes, object_hook=_object_hook_e)
     cbor_object = loads(cbor_bytes, object_hook=_object_hook)
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
         # assert PAYLOAD_HCERT in cbor_object.keys()
         if PAYLOAD_HCERT in cbor_object.keys():  # Hack in order to match different level of CBOR Payload
             cbor_object = cbor_object[PAYLOAD_HCERT][1]
-        assert _ordered(cbor_object) == _ordered(config_env[JSON])
+        assert any([_ordered(cbor_object) == _ordered(config_env[JSON]),
+                    _ordered(cbor_object_e) == _ordered(config_env[JSON])])
     else:
         assert _ordered(cbor_object) != _ordered(config_env[JSON])
+        assert _ordered(cbor_object_e) != _ordered(config_env[JSON])
 
 
 def test_cose_cbor(config_env: Dict):
@@ -329,9 +340,9 @@ def test_cose_cbor(config_env: Dict):
     if not ({CBOR, COSE} <= config_env.keys()):
         skip(f'Test dataset does not contain {CBOR} and/or {COSE}')
     cbor_bytes = unhexlify(config_env[CBOR])
-    cbor_payload = loads(cbor_bytes, object_hook=_object_hook)
+    cbor_payload = loads(cbor_bytes, object_hook=_object_hook_e)
     dgc = _dgc(config_env)
-    cose_payload = loads(dgc.payload, object_hook=_object_hook)
+    cose_payload = loads(dgc.payload, object_hook=_object_hook_e)
 
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
         if PAYLOAD_HCERT not in cbor_payload.keys():  # Hack in order to match different level of CBOR Payload
@@ -394,7 +405,7 @@ def test_expiration_check(config_env: Dict):
     dsc = _dsc(config_env)
     dsc_not_valid_before, dsc_not_valid_after = dsc[3], dsc[4]
     dgc = _dgc(config_env)
-    decoded_payload = loads(dgc.payload, object_hook=_object_hook)
+    decoded_payload = loads(dgc.payload, object_hook=_object_hook_e)
     assert {PAYLOAD_EXPIRY_DATE, PAYLOAD_ISSUE_DATE} <= decoded_payload.keys(), \
         f'COSE Payload is missing expiry date: {PAYLOAD_EXPIRY_DATE} and/or issue date: {PAYLOAD_ISSUE_DATE}.'
     dgc_expiry_date = datetime.fromtimestamp(decoded_payload[PAYLOAD_EXPIRY_DATE], tz=timezone.utc)
@@ -426,7 +437,7 @@ def test_expected_key_usage(config_env: Dict):
     dsc = _dsc(config_env)
     dsc_supported_operations = dsc[2]
     dgc = _dgc(config_env)
-    cose_payload = loads(dgc.payload, object_hook=_object_hook)
+    cose_payload = loads(dgc.payload, object_hook=_object_hook_e)
     assert PAYLOAD_HCERT in cose_payload.keys()
     assert len(cose_payload[PAYLOAD_HCERT]) == 1
     assert 1 in cose_payload[PAYLOAD_HCERT].keys()
