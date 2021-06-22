@@ -1,7 +1,7 @@
 # Norway
 
 * **JSON schema version**: 1.3.0
-* 
+
 This directory contains test files produced by the Norwegian Health Network (NHN)
 
 ## Test files
