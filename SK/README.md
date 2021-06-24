@@ -1,6 +1,7 @@
 # Slovakia
 
-Test files provided by National Health Information Center, Slovakia
+Test files provided by National Health Information Center, Slovakia,
+Schema version 1.2.1
 
 ## Test files
 

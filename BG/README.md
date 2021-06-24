@@ -21,3 +21,7 @@ This directory contains test files produced by the Bulgarian Ministry of Health.
 - [Recovered DGC](2DCode/raw/4.json) - schema errors fixed
 
 ![Recovered](png/BG-4.png)
+
+- [Tested DGC](2DCode/raw/5.json)
+
+![Recovered](png/BG-5.png)
