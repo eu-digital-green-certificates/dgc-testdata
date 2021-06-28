@@ -1,6 +1,7 @@
 test_name,country,test_set,reason
 test_cose_schema,NL,,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/107
-,FR,test_pcr_ok,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/141
+test_cose_json,FR,test_pcr_ok,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/141
+test_cbor_json,FR,test_pcr_ok,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/141
 test_verification_check,ES,401,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/228
 test_verification_check,ES,402,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/228
 test_verification_check,ES,403,https://github.com/eu-digital-green-certificates/dgc-testdata/issues/228
