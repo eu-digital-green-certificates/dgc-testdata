@@ -105,11 +105,28 @@ CONFIG_ERROR = 'CONFIG_ERROR'
 
 
 @filecache(DAY)
-def _get_hcert_schema():
+def _get_hcert_schema(version: str):
     print('Loading HCERT schema ...')
-    return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.3.0/'
-                    'DCC.combined-schema.json')
-    # return load_uri('https://id.uvci.eu/DGC.schema.json')
+    if version == '1.0.0':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.0.0/'
+                        'DGC.combined-schema.json')
+    elif version == '1.0.1':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.0.1/'
+                        'DGC.combined-schema.json')
+    elif version == '1.1.0':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.1.0/'
+                        'DGC.combined-schema.json')
+    elif version == '1.2.0':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.2.0/'
+                        'DGC.combined-schema.json')
+    elif version == '1.2.1':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.2.1/'
+                        'DCC.combined-schema.json')
+    elif version == '1.3.0':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.3.0/'
+                        'DCC.combined-schema.json')
+    else:
+        return load_uri('https://id.uvci.eu/DGC.schema.json')
 
 
 def pytest_generate_tests(metafunc):
@@ -285,7 +302,9 @@ def test_cose_schema(config_env: Dict):
         assert len(cose_payload[PAYLOAD_HCERT]) == 1
         assert 1 in cose_payload[PAYLOAD_HCERT].keys()
         hcert = cose_payload[PAYLOAD_HCERT][1]
-        schema_validate(hcert, _get_hcert_schema())
+        assert 'ver' in hcert.keys(), f'HCERT Payload: {hcert} does not contain version information'
+        schema_validate(hcert, _get_hcert_schema(hcert['ver']))
+        # schema_validate(hcert, _get_hcert_schema())
         # assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1,
         # 'DGC adheres to schema but contains multiple certificates'
         assert len([key for key in hcert.keys() if key in ['v', 'r', 't']]) == 1, \
