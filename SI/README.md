@@ -8,41 +8,33 @@ This directory contains test files produced by the Slovenian development team. T
 
 ### 1
 
-[1.json](2DCode/raw/1.json) - One vaccination entry. 
+[VAC](2DCode/raw/VAC.json) - One vaccination entry. 
 
 All tests should be successful.
 
-![1](png/1.png)
+![VAC](png/VAC.png)
 
-### 2
+### REC
 
-[2.json](2DCode/raw/2.json) - One NAA test entry. The sc-attribute is tagged (0 tag before date-time). Valid only for 72hrs.
-
-All tests should be successful.
-
-![2](png/2.png)
-
-### 3
-
-[3.json](2DCode/raw/3.json) - One NAA test entry. The sc-attribute is not tagged. Valid only for 72hrs.
+[REC.json](2DCode/raw/REC.json) - One recovery entry. 
 
 All tests should be successful.
 
-![3](png/3.png)
+![REC](png/REC.png)
 
-### 4
+### TEST AG
 
-[4.json](2DCode/raw/4.json) - One RAT test entry.  Valid only for 72hrs.
-
-All tests should be successful.
-
-![4](png/4.png)
-
-### 5
-
-[5.json](2DCode/raw/5.json) - One recovery entry. 
+[test-AG.json](2DCode/raw/test-AG.json) - One AntiGen test entry. The sc-attribute is not tagged (no 0 tag before date-time). Valid only for 72hrs.
 
 All tests should be successful.
 
-![5](png/5.png)
+![TEST-AG](png/TEST-AG.png)
+
+### TEST PCR
+
+[test-PCR.json](2DCode/raw/test-PCR.json) - One PCR test entry.  Valid only for 72hrs.
+
+All tests should be successful.
+
+![TEST-PCR](png/TEST-PCR.png)
 
