@@ -2,54 +2,39 @@
 
 ---
 
-This directory contains test files produced by the Slovenian integration team. The DGCs were signed with a DSC from ACC NB.
+This directory contains test files produced by the Slovenian development team. The DGCs were signed with a DSC from ACC NB. The software used to produce the QR-codes is based on https://github.com/DIGGSweden/dgc-java.
 
 ## Test files
 
 ### 1
 
-[1.json](2DCode/raw/1.json) - Basic DGC with one vaccination entry. 
+[VAC](2DCode/raw/VAC.json) - One vaccination entry. 
 
 All tests should be successful.
 
-![1](png/1.png)
+![VAC](png/VAC.png)
 
-### 2
+### REC
 
-[2.json](2DCode/raw/2.json) - Basic DGC with two vaccination entries. 
-
-All tests should be successful.
-
-![2](png/2.png)
-
-### 3
-
-[3.json](2DCode/raw/3.json) - Basic DGC with one vaccination entry. Signed with RSA. 
+[REC.json](2DCode/raw/REC.json) - One recovery entry. 
 
 All tests should be successful.
 
-![3](png/3.png)
+![REC](png/REC.png)
 
-### 4
+### TEST AG
 
-[4.json](2DCode/raw/4.json) - Basic DGC with one vaccination entry. In this DGC no Cose_Sign1 message tag is included.
-
-All tests should be successful.
-
-![4](png/4.png)
-
-### 5
-
-[5.json](2DCode/raw/5.json) - Basic DGC with one vaccination entry. In this DGC both the CWT and Cose_Sign1 message tags are included.
+[test-AG.json](2DCode/raw/test-AG.json) - One AntiGen test entry. The sc-attribute is not tagged (no 0 tag before date-time). Valid only for 72hrs.
 
 All tests should be successful.
 
-![5](png/5.png)
+![TEST-AG](png/TEST-AG.png)
 
-### 6
+### TEST PCR
 
-[6.json](2DCode/raw/6.json) - Basic DGC with one vaccination entry. Signed with another key than what is indicated.
+[test-PCR.json](2DCode/raw/test-PCR.json) - One PCR test entry.  Valid only for 72hrs.
 
-Signature validation should fail.
+All tests should be successful.
 
-![6](png/6.png)
+![TEST-PCR](png/TEST-PCR.png)
+

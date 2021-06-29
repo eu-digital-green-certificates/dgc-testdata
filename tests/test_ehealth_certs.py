@@ -64,7 +64,7 @@ from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.hazmat.primitives.hashes import SHA256
 from cryptography.utils import int_to_bytes
 from cryptography.x509 import ExtensionNotFound
-from dateutil import parser
+from dateutil.parser import parse, isoparse
 from filecache import filecache, DAY
 from jsonref import load_uri
 from jsonschema import validate as schema_validate
@@ -89,7 +89,7 @@ EXPECTED_VALID_JSON = 'EXPECTEDVALIDJSON'
 EXPECTED_SCHEMA_VALIDATION = 'EXPECTEDSCHEMAVALIDATION'
 EXPECTED_COMPRESSION = 'EXPECTEDCOMPRESSION'
 EXPECTED_KEY_USAGE = 'EXPECTEDKEYUSAGE'
-TIMESTAMP_ISO8601_EXTENDED = "%Y-%m-%dT%H:%M:%S.%fZ"
+TIMESTAMP_ISO8601 = "%Y-%m-%dT%H:%M:%SZ"
 
 CBOR = 'CBOR'
 CERTIFICATE = 'CERTIFICATE'
@@ -105,9 +105,28 @@ CONFIG_ERROR = 'CONFIG_ERROR'
 
 
 @filecache(DAY)
-def _get_hcert_schema():
+def _get_hcert_schema(version: str):
     print('Loading HCERT schema ...')
-    return load_uri('https://id.uvci.eu/DCC.schema.json')
+    if version == '1.0.0':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.0.0/'
+                        'DGC.combined-schema.json')
+    elif version == '1.0.1':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.0.1/'
+                        'DGC.combined-schema.json')
+    elif version == '1.1.0':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.1.0/'
+                        'DGC.combined-schema.json')
+    elif version == '1.2.0':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.2.0/'
+                        'DGC.combined-schema.json')
+    elif version == '1.2.1':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.2.1/'
+                        'DCC.combined-schema.json')
+    elif version == '1.3.0':
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.3.0/'
+                        'DCC.combined-schema.json')
+    else:
+        return load_uri('https://id.uvci.eu/DGC.schema.json')
 
 
 def pytest_generate_tests(metafunc):
@@ -160,8 +179,9 @@ def xfail_known_issues(request, known_issue: str):
         request.applymarker(mark.xfail(reason=known_issue))
 
 
+# noinspection PyUnusedLocal
 def _object_hook(decoder, value):
-    return {k: v.astimezone(timezone.utc).strftime(TIMESTAMP_ISO8601_EXTENDED) if isinstance(v, (date, datetime)) else v
+    return {k: v.astimezone(timezone.utc).strftime(TIMESTAMP_ISO8601) if isinstance(v, (date, datetime)) else v
             for k, v in value.items()}
 
 
@@ -234,8 +254,14 @@ def _dsc(config_env: Dict):
 def _ordered(obj):
     if isinstance(obj, dict):
         return sorted((k, _ordered(v)) for k, v in obj.items())
-    if isinstance(obj, list):
+    elif isinstance(obj, list):
         return sorted(_ordered(x) for x in obj)
+    elif isinstance(obj, str):
+        # noinspection PyBroadException
+        try:
+            return parse(obj, fuzzy=False).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
+        except Exception:
+            return obj
     else:
         return obj
 
@@ -276,7 +302,9 @@ def test_cose_schema(config_env: Dict):
         assert len(cose_payload[PAYLOAD_HCERT]) == 1
         assert 1 in cose_payload[PAYLOAD_HCERT].keys()
         hcert = cose_payload[PAYLOAD_HCERT][1]
-        schema_validate(hcert, _get_hcert_schema())
+        assert 'ver' in hcert.keys(), f'HCERT Payload: {hcert} does not contain version information'
+        schema_validate(hcert, _get_hcert_schema(hcert['ver']))
+        # schema_validate(hcert, _get_hcert_schema())
         # assert len(set(hcert.keys()) & {'v', 'r', 't'}) == 1,
         # 'DGC adheres to schema but contains multiple certificates'
         assert len([key for key in hcert.keys() if key in ['v', 'r', 't']]) == 1, \
@@ -298,8 +326,6 @@ def test_cose_json(config_env: Dict):
         assert 1 in cose_payload[PAYLOAD_HCERT].keys()
         hcert = cose_payload[PAYLOAD_HCERT][1]
         assert _ordered(hcert) == _ordered(config_env[JSON])
-    else:
-        assert not _ordered(cose_payload) == _ordered(config_env[JSON])
 
 
 def test_cbor_json(config_env: Dict):
@@ -310,7 +336,6 @@ def test_cbor_json(config_env: Dict):
     if not ({CBOR, JSON} <= config_env.keys()):
         skip(f'Test dataset does not contain {CBOR} and/or {JSON}')
     cbor_bytes = unhexlify(config_env[CBOR])
-    cbor_object = loads(cbor_bytes)
     cbor_object = loads(cbor_bytes, object_hook=_object_hook)
     if config_env[EXPECTED_RESULTS][EXPECTED_DECODE]:
         # assert PAYLOAD_HCERT in cbor_object.keys()
@@ -387,7 +412,7 @@ def test_expiration_check(config_env: Dict):
         skip(f'Test dataset does not contain {TEST_CONTEXT} and/or {CERTIFICATE}')
 
     if TEST_CONTEXT in config_env.keys() and VALIDATION_CLOCK in config_env[TEST_CONTEXT].keys():
-        validation_clock = parser.isoparse(config_env[TEST_CONTEXT][VALIDATION_CLOCK])
+        validation_clock = isoparse(config_env[TEST_CONTEXT][VALIDATION_CLOCK])
     else:
         validation_clock = datetime.utcnow()
 
