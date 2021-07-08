@@ -29,3 +29,11 @@ All tests should be successful.
 All tests should be successful.
 
 ![3](png/3.png)
+
+### 4
+
+[4.json](2DCode/raw/4.json) - DCC with a vaccination certificate entry containing an incomplete birthdate.
+
+All tests should be successful.
+
+![4](png/4.png)
