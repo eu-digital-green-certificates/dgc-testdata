@@ -10,11 +10,11 @@
 
 ### Test
 
-[2.json](2DCode/raw/2.json): Valid certificate with one test entry where Covid not detected and 'sc' date-time string ***IS NOT*** tagged with CBOR TAG 0.
+[2.json](2DCode/raw/2.json): Valid certificate with one test entry for NAAT (Nucleic acid amplification with probe detection) where Covid not detected.
 
 ![2](png/2.png)
 
-[3.json](2DCode/raw/3.json): Valid certificate with one test entry where Covid not detected and 'sc' date-time string ***IS*** tagged with CBOR TAG 0.
+[3.json](2DCode/raw/3.json): Valid certificate with one test entry for RAT (Rapid Antigen Test) where Covid not detected.
 
 ![3](png/3.png)
 
