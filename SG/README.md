@@ -2,13 +2,13 @@
 
 ---
 
-This directory contains test files produced by the [Notαrise](https://www.notarise.gov.sg/). 
+This directory contains test files produced by the [Notαrise](https://www.notarise.gov.sg/).
 
 ## Test files
 
 ### 1 - Vaccination certificate
 
-[1.json](2DCode/raw/1.json) - Basic DGC with a second dose vaccination certificate entry. 
+[1.json](2DCode/raw/1.json) - Basic DGC with a second dose vaccination certificate entry.
 
 All tests should be successful.
 
