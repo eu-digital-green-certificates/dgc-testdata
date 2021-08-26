@@ -37,3 +37,11 @@ All tests should be successful.
 All tests should be successful.
 
 ![4](png/4.png)
+
+### 5
+
+[5.json](2DCode/raw/5.json) - DCC with a vaccination certificate entry for a vaccination older than 365 days.
+
+All tests should be successful.
+
+![5](png/5.png)
