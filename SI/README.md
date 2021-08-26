@@ -28,7 +28,7 @@ All tests should be successful.
 
 All tests should be successful.
 
-![TEST-AG](png/TEST-AG.png)
+![TEST-AG](png/test-AG.png)
 
 ### TEST PCR
 
@@ -36,5 +36,5 @@ All tests should be successful.
 
 All tests should be successful.
 
-![TEST-PCR](png/TEST-PCR.png)
+![TEST-PCR](png/test-PCR.png)
 

@@ -125,8 +125,9 @@ def _get_hcert_schema(version: str):
     elif version == '1.3.0':
         return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.3.0/'
                         'DCC.combined-schema.json')
-    else:
-        return load_uri('https://id.uvci.eu/DGC.schema.json')
+    else:  # Change default schema URL to version 1.3.0
+        return load_uri('https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/release/1.3.0/'
+                        'DCC.combined-schema.json')
 
 
 def pytest_generate_tests(metafunc):
