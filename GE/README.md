@@ -1,6 +1,6 @@
 # Georgia
 
-This directory contains test files, signed by "MOH".
+This directory contains test files, signed by "Ministry of IDPs from the occupied territories, Labour, Health and SA of Georgia".
 
 ## Test files
 
