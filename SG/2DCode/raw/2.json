@@ -45,7 +45,6 @@
         "EXPECTEDVALIDJSON": true,
         "EXPECTEDCOMPRESSION": true,
         "EXPECTEDB45DECODE": true,
-        "EXPECTEDPICTUREDECODE": true,
-        "EXPECTEDEXPIRATIONCHECK": true
+        "EXPECTEDPICTUREDECODE": true
     }
 }
