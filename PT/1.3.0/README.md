@@ -26,7 +26,7 @@ All tests should be successful.
 
 All tests should be successful.
 
-![3](2DCode/png/3.png)
+![3](png/3.png)
 
 ### 4 - NAA TEST
 
