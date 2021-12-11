@@ -2,12 +2,12 @@
   "JSON" : {
     "ver" : "1.3.0",
     "nam" : {
-      "fn" : "Rogaliński-Król",
-      "fnt" : "ROGALINSKI<KROL",
-      "gn" : "Stanisław",
-      "gnt" : "STANISLAW"
+      "fn" : "Akdi",
+      "fnt" : "Akdi",
+      "gn" : "Omar",
+      "gnt" : "Omar"
     },
-    "dob" : "1958-11-11",
+    "dob" : "1974-06-10",
     "v" : [ {
       "tg" : "840539006",
       "vp" : "J07BX03",
