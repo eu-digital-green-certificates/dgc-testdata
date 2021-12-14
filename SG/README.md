@@ -16,7 +16,7 @@ All tests should be successful.
 
 ### 2 - Test certificate: NAT
 
-[2.json](2DCode/raw/2.json) - Basic DGC with a Positive NAT test certificate entry.
+[2.json](2DCode/raw/2.json) - Basic DGC with **Not Detected** NAT test certificate entry.
 
 All tests should be successful.
 
@@ -24,7 +24,7 @@ All tests should be successful.
 
 ### 3 - Test certificate: RAT
 
-[3.json](2DCode/raw/3.json) - Basic DGC with a Positive RAT test certificate entry.
+[3.json](2DCode/raw/3.json) - Basic DGC with **Not Detected** RAT test certificate entry.
 
 All tests should be successful.
 
