@@ -1,0 +1,24 @@
+{
+  "ver": "1.3.0",
+  "nam": {
+    "fn": "Brūvers",
+    "fnt": "BRUVERS",
+    "gn": "Andris",
+    "gnt": "ANDRIS"
+  },
+  "dob": "1984-06-19",
+  "v": [
+    {
+      "tg": "840539006",
+      "vp": "J07BX03",
+      "mp": "EU/1/20/1525",
+      "ma": "ORG-100001417",
+      "dn": 1,
+      "sd": 1,
+      "dt": "2021-07-14",
+      "co": "LV",
+      "is": "Nacionālais veselības dienests",
+      "ci": "URN:UVCI:01:LV:C3C544DB313541CD1D1B645B5E55CF8E"
+    }
+  ]
+}

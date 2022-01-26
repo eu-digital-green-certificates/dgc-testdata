@@ -1,0 +1,24 @@
+{
+  "ver": "1.3.0",
+  "nam": {
+    "fn": "Ozoliņš",
+    "fnt": "OZOLINS",
+    "gn": "Andris",
+    "gnt": "ANDRIS"
+  },
+  "dob": "1984-06-19",
+  "v": [
+    {
+      "tg": "840539006",
+      "vp": "J07BX03",
+      "mp": "EU/1/20/1525",
+      "ma": "ORG-100001417",
+      "dn": 3,
+      "sd": 1,
+      "dt": "2021-10-17",
+      "co": "LV",
+      "is": "Nacionālais veselības dienests",
+      "ci": "URN:UVCI:01:LV:FC45A983D68F7BA28A6A08898F6769DD"
+    }
+  ]
+}

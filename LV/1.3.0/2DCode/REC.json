@@ -1,0 +1,21 @@
+{
+  "ver": "1.3.0",
+  "nam": {
+    "fn": "Zariņš",
+    "fnt": "ZARINS",
+    "gn": "Jānis",
+    "gnt": "JANIS"
+  },
+  "dob": "1970-03-23",
+  "r": [
+    {
+      "tg": "840539006",
+      "fr": "2022-01-06",
+      "co": "LV",
+      "is": "Nacionālais veselības dienests",
+      "df": "2022-01-17",
+      "du": "2022-07-05",
+      "ci": "URN:UVCI:01:LV:D2201A1482134759DC58B23C6FCB71FD"
+    }
+  ]
+}
