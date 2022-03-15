@@ -8,11 +8,13 @@ This directory contains test files produced by the [Notαrise](https://www.notar
 
 ### 1 - Vaccination certificate
 
-[1.json](2DCode/raw/1.json) - Basic DGC with a second dose vaccination certificate entry.
+[1.json](2DCode/raw/1.json) - Basic DGC with primary series of vaccination certificate entry.
+[1-booster.json](2DCode/raw/1-booster.json) - Basic DGC with booster series of vaccination certificate entry.
 
 All tests should be successful.
 
 ![1](png/1.png)
+![1-booster](png/1-booster.png)
 
 ### 2 - Test certificate: NAT
 
