@@ -68,3 +68,16 @@ This directory contains DCC test files produced by the Social Insurance Institut
 
 ![10](png/10.png)
 
+## Test files for 31.1.2022 testing
+
+### VAC_FI.png
+
+![VAC_FI.png](png/VAC_FI.png)
+
+### REC_FI.png
+
+![REC_FI.png](png/REC_FI.png)
+
+### TEST_FI.png
+
+![TEST_FI.png](png/TEST_FI.png)
