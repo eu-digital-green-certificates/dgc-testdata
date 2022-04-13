@@ -31,3 +31,11 @@ All tests should be successful.
 All tests should be successful.
 
 ![3](png/3.png)
+
+### 4 - Recovery certificate
+
+[4.json](2DCode/raw/4.json) - Basic DGC with recovery certificate entry.
+
+All tests should be successful.
+
+![4](png/4.png)
